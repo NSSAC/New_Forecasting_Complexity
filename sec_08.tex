@@ -1,0 +1,47 @@
+\section{Conclusions and Future Work}
+\label{sec:concl}
+
+We formulated several short term forecasting problems under
+the SIR model. 
+Our results show that many of these problems are computationally
+intractable even when the time horizon is as small as two.
+These results supplement the reasons discussed in
+\cite{Drake-2005,Drake-2006} for the difficulty of accurately predicting
+several disease parameters. 
+We also presented extensions of our results to realistic 
+social networks.
+Further, we demonstrated the tightness of our complexity results 
+by showing that many of the problems can be solved efficiently
+when the time horizon is one.
+We also presented randomized approximation algorithms for 
+some short term forecasting problems. 
+In addition, we showed how our results can be extended to a
+number of additional forecasting measures introduced in \cite{TC+2016}
+and to three other common epidemic models. 
+
+We close by pointing out some directions for future research.
+One direction is to investigate whether there are useful classes
+of social networks for which short term forecasting problems can be
+solved efficiently. 
+In a companion paper \cite{Rosenkrantz_etal_2016}, we have
+shown that many forecasting problems under the SIR model can be solved efficiently
+when the treewidth of the underlying graph is bounded.
+A second direction is to study the complexity of the problem of 
+determining the expected number of infections at time $t$, 
+where $t$ is a \emph{fixed} value $\geq 3$. 
+(We showed in Section~\ref{sec:poly_versions} that the problem can be 
+solved efficiently for $t = 1$ and $t = 2$.) 
+We also showed that the problem of computing the probability 
+of reaching a configuration
+that satisfies an $r$-symmetric constraint in one time step
+can be solved efficiently.
+It is of interest to investigate whether this result can be
+extended to other forms of constraints or to special classes of
+networks.
+Another direction is to study forecasting problems where the input consists
+of two or more networks and the goal is to determine which of the networks 
+is more likely to cause a given number of infections at a specified time.
+Finally, it is also of interest to study forecasting problems
+under a model where the initial configuration is specified by a 
+vector of probability values, with each value denoting the probability
+that the corresponding node is in state \istate{}.

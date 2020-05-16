@@ -1,0 +1,184 @@
+\begin{center}
+\Large{\textbf{Appendix}}
+\end{center}
+
+\noindent
+\textbf{Statement of Theorem~\ref{thm:hardness_for_whole_set}:}~
+\begin{description}
+\item{(1)}
+\emph{
+For any $t \geq 2$,~ the problems \tNewInfv,~ \tTotInfv{} ~and \\
+\tTotVulv{} ~are~ \cnump-hard.
+}
+
+\item{(2)}
+\emph{
+Unless \textbf{P} = \cnp,
+for each of the problems \tNewInfv, \tTotInfv{} and
+\tTotVulv{} and for any $t \geq 2$,
+there is a constant $\epsilon > 0$
+such that if $p^*$ is the actual solution value,
+the quantity $\log{(2^n\,p^*)}$ cannot be approximated to within the factor
+$O(n^{\epsilon})$ in polynomial time, where $n$
+is the maximum number of nodes that can get infected at $t-1$.
+}
+\end{description}
+
+\medskip
+
+\noindent
+\textbf{Proof of Part (1):}~ 
+
+\medskip
+\noindent
+\textbf{Proof for} \tNewInfv:~ 
+We first consider the case where $t = 2$.
+The reduction from \mtsat{} for this problem is identical to the one for
+\tNewInfs{} for $t = 2$ given in the proof of 
+Part~(1) Theorem~\ref{thm:gen_hardness}.
+In that reduction, we note that every node that gets infected at $t = 2$
+is a member of the node $V_2$ which contains $m$ nodes.
+Therefore, the probability that at least $m$ nodes of the entire
+node set $V$ get infected at $t = 2$ is equal to the probability that
+all the $m$ nodes in $V_2$ get infected at time $t = 2$.
+The latter probability is equal to $N/2^n$, where $n$ and $N$ denote 
+respectively the number of variables in and the number of satisfying
+assignments of the given \mtsat{} instance.
+The result for \tNewInfv{} for $t = 2$ follows.
+The construction for $t \geq 3$ is also identical to that presented
+in the proof of Theorem~\ref{thm:gen_hardness}.  
+
+\medskip
+\noindent
+\textbf{Proof for} \tTotInfv:~
+Again, we first consider the case where $t = 2$.
+We modify the construction of graph $G(V,E)$ 
+and other components of the problem instance from the construction
+used in the proof of Theorem~\ref{thm:gen_hardness} as follows.
+
+\begin{description}
+\item{(a)} Node sets $V_0$ and $V_1$ are unchanged.
+Node set $V_2$ is modified to contain $mn$ nodes; further, 
+$V_2$ is partitioned into $m$ subsets $W_1$, $W_2$, \ldots $W_m$,
+where, for $1 \leq j \leq m$, subset $W_j = \{w_j^1, w_j^2, \ldots, w_j^n\}$ 
+corresponds to clause $C_j$ and contains $n$ nodes.
+Thus, $|V| = mn+n+1$.
+
+\item{(b)} Edge set $E_1$ is unchanged. Edge set $E_2$ is modified as follows.
+For each clause $C_j = (x_a \vee x_b)$, $1 \leq j \leq m$,
+$E_2$ has the following $2n$ edges: 
+$\{v_a, w_j^1\}$, $\{v_a, w_j^2\}$, $\ldots$, $\{v_a, w_j^n\}$, 
+$\{v_b, w_j^1\}$, $\{v_b, w_j^2\}$, $\ldots$, $\{v_b, w_j^n\}$.
+Thus, $|E| = n+2mn$.
+
+\item{(c)} The value of $q$ in specifying event \cale{} is 
+given by $q = mn + 2$.
+\end{description}
+
+\noindent
+The construction of the transmission probabilities and initial
+configuration are unchanged.
+The event \cale{} whose probability is to be computed 
+is that the number of nodes of $V$ in state \istate{} or 
+state \rstate{} at $t = 2$ is at least $mn + 2$.  
+
+To prove that the probability of \cale{} is $N/2^n$,
+we establish the following: (i) each infection pattern 
+corresponding to a satisfying
+assignment for the \mtsat{} instance causes 
+all $mn$ nodes in $V_2$
+to get infected at time $t = 2$, thereby making event \cale{} occur, 
+and (ii) each infection pattern corresponding to a non-satisfying assignment 
+causes at most $(m-1)n$  nodes in $V_2$
+to get infected at time $t = 2$, 
+thereby preventing event \cale{} ~from occurring.
+The proof is again in two parts.
+
+\noindent
+\underline{Part 2.1:}~
+Consider any infection pattern that corresponds to a
+satisfying assignment.
+Since the assignment satisfies all clauses, at time $t = 2$,
+each node in $V_2$ has at least one edge to a node 
+in state \istate{} in $V_1$.
+Moreover, at least one node in $V_1$ is in state \istate{}  at $t = 1$. 
+Thus, including node $s$ which was infected at time 0,
+at least $mn+2$ nodes are infected by time $t = 2$.  
+
+\noindent
+\underline{Part 2.2:}~
+Consider any infection pattern that corresponds to a
+non-satisfying assignment.
+Then, there is at least one clause $c_j$ that is not satisfied.
+Each node in set $W_j$ has two neighbors, say $v_a$ and $v_b$,
+in $V_1$, and both $v_a$ and $v_b$ are in state \sstate{} at the 
+end of time step $t = 1$.
+Therefore, the nodes in $W_j $ cannot be infected at $t = 2$.
+Thus, even if every node in $V_1$ gets infected at time $t = 2$,
+at most $1 + n + (m-1)n$ nodes are infected by  time $t = 2$,
+that is, the total number of nodes infected  by  time $t = 2$ 
+is at most $mn+1$.
+
+This completes the proof of \cnump-hardness of \TwoTotInfv.
+The \cnump-hardness of\\ \tTotInfv{} for set $V$ for any $t \geq 3$ can be 
+proven in a manner similar to that used in the proof of 
+Theorem~\ref{thm:gen_hardness}.
+
+
+\medskip
+\noindent
+\textbf{Proof for} \tTotVulv:~
+Again, we first consider the case where $t = 2$.
+We remind the reader that \tTotVulv{} problem at $t = 2$
+requires the computation of the probability that \emph{all} the nodes
+in $V$ get infected \emph{by} time $t = 2$.
+We modify the construction of graph $G(V,E)$ 
+and other components of the problem instance from the construction
+used in the proof of Theorem~\ref{thm:gen_hardness} as follows.
+
+\begin{description}
+\item{(a)} Node sets $V_0$, $V_1$ and $V_2$ are unchanged.
+Thus, $|V| = m+n+1$.
+
+\item{(b)} Edge sets $E_1$ and $E_2$ are unchanged. 
+An additional set of edges, denoted by $E_3$, includes an edge
+between every pair of nodes in $V_1$.
+(The edges in $E_3$ ensure that the nodes of $V_1$ form a clique.)
+Hence, $|E| = n(n+1)/2+2m$.
+
+\item{(c)} The transmission probabilities of the edges in $E_1 \cup E_2$
+remain the same as before.
+The transmission probability of each edge in $E_3$ is set to 1.
+\end{description}
+
+\noindent
+Consider any satisfying assignment for the given \mtsat{} instance.
+Such an assignment must infect at least one node in $V_2$ at $t = 1$ and
+causes all the nodes in $V_2$ to get infected at $t = 2$.
+Since the nodes in $V_1$ form a clique and the transmission probability
+of each edge in that clique is 1, any node of $V_1$ which is in state \sstate{}
+at $t = 1$ gets infected at $t = 2$.
+In other words, every satisfying assignment to the \mtsat{} instance causes
+all the nodes in $V$ to be infected \emph{by} time $t = 2$.
+Any assignment that does not satisfy the given \mtsat{} instance leaves
+at least one node of $V_2$ to remain in state \sstate{} at $t = 2$.
+Therefore, the probability that all nodes of $V$ get infected by $t = 2$
+is equal to the probability that an assignment chosen uniformly randomly
+satisfies the given \mtsat{} instance.
+It follows that the \tTotVulv{} problem is \cnump-hard for $t = 2$.
+The \cnump-hardness of \tTotVulv{} for any $t \geq 3$ can be 
+proven in a manner similar to that used in the proof of 
+Theorem~\ref{thm:gen_hardness}.
+
+\medskip
+
+\noindent
+\textbf{Proof of Part (2):}~ The reductions used in proof of Part~(1) above show
+that for each of the three problems, the solution value $p^*$ is the
+probability that the an assignment chosen uniformly randomly from the set
+of all possible assignments to the \mtsat{} instance.
+Also, in each case, $n$ is the maximum number of nodes that can get
+infected at time $t-1$.
+Thus, the result of Part~(2) follows using the same argument as the one
+used to prove Part~(2) of Theorem~\ref{thm:gen_hardness}.
+\QED

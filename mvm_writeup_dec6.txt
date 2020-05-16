@@ -1,0 +1,72 @@
+
+\smallskip
+\noindent
+
+{\em 1. Unpredictability sets in very early in time.} \ Our results
+show that computational hardness based unpredictability of macroscopic
+as well as individual properties of epidemic dynamics happen very
+early in time. This is important.  One intuitively expects hardness
+to set in after a polynomial number of steps.
+
+The results should be contrasted with two earlier results: one by
+us and others on reachability in dynamical systems when the state
+update functions are deterministic; in this case it takes exponential
+time to get unpredictability results; and the results of Rabani,
+Vazirani and Arora for quadratic dynamical systems that get
+PSPACE-hardness in polynomial number of steps.
+
+Second, both macroscopic and individual properties are unpredictable.
+Furthermore, the results can be extended to show that the
+unpredictability results hold even when the system dynamics are
+known for the first $t$ time periods and one needs to forecast the
+outcome at time $t+1$ and beyond. In other words, atleast from the
+worst case standpoint, unpredictability results do not change even
+if we know the system evolution for a few time periods.
+
+\smallskip
+\noindent
+{\em 2. Results hold when we have just one random parameter.} \ The
+results hold when there is exactly one source of randomness, namely
+the transmission probability. Rest of the model parameters are known
+in advance and deterministic. This includes the incubation time,
+infectious period, network and the starting condition which has
+exactly one node as the index node.  We is the goal in computational
+complexity theory, the hardness results are best proven for simplest
+instances.  In a companion paper, we consider when the initial
+conditions are not known precisely.
+
+\smallskip
+\noindent
+{\em 3. The results are pervasive.} \
+The unpredictability results are pervasive in the sense that they
+hold for a large variant of problems  and also for a number of
+different contagion dynamics. The variants include, individual and
+macroscopic quantities (e.g. probability of a single node being
+infected versus probability that the total number of infections
+after t time units is above a threshold, peak time, time to peak,
+etc.).
+
+Furthermore the results hold even for power law networks and also
+networks that have small diameter. They also hold when the network
+is a clique so far as we allow a few different kinds of transmission
+probabilities.
+
+\smallskip
+\noindent
+{\em  4. Provable predictability results for certain special cases.} \
+For certain special cases, one can compute provable approximations.
+One such special case is expected number of infections.  Another
+is computing the probability of a single node being infected by
+time t (when t is fixed). Finally another result show how to compute
+the probability that the total number of infections after a few
+time steps is above a certain threshold.  The last results are
+interesting and is based on using an importance sampling technique.
+
+
+\smallskip
+Taken together, our results show that one cannot expect to find
+(worst case complexity) provable algorithms for predicting epidemic
+dynamics on networks.  The results do not rule out practical
+heuristics of course, but they say that good algorithms that work
+across a range of inputs should exploit the underlying structure
+of the problem somehow.

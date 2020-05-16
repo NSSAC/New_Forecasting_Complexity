@@ -1,0 +1,304 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%%% Short-Term Forecasting in SIR Systems:  
+%%% Last edited by Ravi (June 9, 2015).  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+  
+\documentclass[11pt]{article} 
+%\usepackage{latex8}  
+\usepackage{times}  
+%\usepackage{epsfig}  
+%\usepackage{psfig}  
+\usepackage{amsfonts}  
+\usepackage{latexsym}  
+\usepackage{amsmath}  
+\usepackage[latin1]{inputenc}  
+\usepackage{varioref}  
+\usepackage{cite}  
+  
+\usepackage{fancybox}  
+%% \usepackage{shadow}  
+\usepackage{times}  
+\usepackage{amsmath}  
+\usepackage{amsfonts}  
+\usepackage{latexsym}  
+\usepackage{color}  
+\usepackage{graphicx}  
+\usepackage{subfig}  
+\usepackage{lscape}  
+\usepackage{url}
+
+\usepackage{epigraph}  
+%%\usepackage{patchcmd}  
+
+%%\usepackage{framed}  
+
+  
+\setlength{\textheight}{9 in}  
+\setlength{\textwidth}{6.3 in}  
+\setlength{\oddsidemargin}{-0.0125 in}  
+\setlength{\evensidemargin}{-0.0125 in}  
+\setlength{\topmargin}{-0.5 in}  
+\setlength{\parskip}{2pt}  
+
+\setlength{\itemsep}{1pt}  
+
+%% For use with the epigraph package
+
+\setlength\epigraphwidth{10cm}
+\setlength\epigraphrule{0pt}
+
+%%\makeatletter
+%%\patchcommand{\epigraph}{\@epitext{#1}}{\itshape\@epitext{#1}}{}{}
+%%\makeatother
+   
+  
+\newtheorem{theorem}{Theorem}[section]  
+\newtheorem{lemma}[theorem]{Lemma}  
+\newtheorem{corollary}[theorem]{Corollary}  
+\newtheorem{fact}[theorem]{Fact}  
+\newtheorem{claim}[theorem]{Claim}  
+\newtheorem{observation}[theorem]{Observation}  
+\newtheorem{definition}[theorem]{Definition}  
+\newtheorem{proposition}[theorem]{Proposition}  
+\newtheorem{example}[theorem]{Example}  
+  
+\newcommand{\calb}{\mbox{${\cal B}$}}  
+\newcommand{\calc}{\mbox{${\cal C}$}}  
+\newcommand{\calcp}{\mbox{${\cal C}'$}}  
+
+\newcommand{\calco}{\mbox{$\mathcal{C}_1$}}
+\newcommand{\calct}{\mbox{$\mathcal{C}_2$}}
+\newcommand{\calcop}{\mbox{$\mathcal{C}_1'$}}
+\newcommand{\calcodp}{\mbox{$\mathcal{C}_1''$}}
+
+\newcommand{\calcdp}{\mbox{${\cal C}''$}}  
+\newcommand{\calf}{\mbox{${\cal F}$}}  
+\newcommand{\cale}{\mbox{${\cal E}$}}  
+\newcommand{\cali}{\mbox{${\cal I}$}}  
+\newcommand{\calp}{\mbox{${\cal P}$}}  
+\newcommand{\cals}{\mbox{${\cal S}$}}  
+\newcommand{\calt}{\mbox{${\cal T}$}}  
+  
+\newcommand{\calh}{\mbox{${\cal H}$}}  
+\newcommand{\calr}{\mbox{${\cal R}$}}  
+\newcommand{\cald}{\mbox{${\cal D}$}}  
+
+
+\newcommand{\cnp}{\mbox{\textbf{NP}}}
+\newcommand{\cnump}{\mbox{\textbf{\#P}}}
+
+\newcommand{\ttrue}{\textsc{True}}
+\newcommand{\tfalse}{\textsc{False}}
+  
+%% \newcommand{\reach}{{\textsc{Reachability}}}
+%% \newcommand{\treach}{{$t$-\textsc{Reachability}}}
+
+% box for end of proof  
+\newcommand{\QED}{\hfill\rule{2mm}{2mm}\medskip}   
+
+%% Additional newcommands from Anil.
+
+\newcommand{\opt}{\text{OPT}}
+\newcommand{\eopt}{E_{\text{OPT}}}
+\newcommand{\prob}{\textsc{Spectral Radius Minimization}}
+\newcommand{\expect}{\mathrm{Exp}}
+\DeclareMathOperator*{\nodes}{nodes}
+\DeclareMathOperator*{\walks}{walks}
+\DeclareMathOperator*{\ct}{count}
+  
+  
+
+\begin{document} 
+\include{titlepage}
+%%\maketitle  
+
+\begin{center}
+\Large{\textbf{Algorithmic theory of Forecasting 
+               Contagion Dynamics} \\ \smallskip
+       \textbf{over Networks -- Part~I~:~ General Graphs}}
+\end{center}
+
+\medskip
+
+\thispagestyle{empty}
+
+\begin{center}
+\textsc{Madhav V. Marathe}$^1$ \hspace{0.2in}
+\textsc{S. S. Ravi}$^{2,3}$ \hspace{0.2in}
+\textsc{Daniel J. Rosenkrantz}$^3$ \\ 
+\vspace*{1ex}
+\textsc{Richard E. Stearns}$^3$ \hspace{0.2in}
+\textsc{Anil K. Vullikanti}$^1$ 
+\end{center}
+
+\setcounter{footnote}{1}
+\footnotetext[1]{
+Network Dynamics and Simulation Sciences Laboratory,
+Biocomplexity Institute and 
+Department of Computer Science, Virginia Tech,
+Blacksburg, VA 24061.
+\textsf{Email:} \texttt{\{mmarathe, ssravi, akumar\}@vbi.vt.edu}. \smallskip
+}
+
+\setcounter{footnote}{2}
+\footnotetext[2]{
+Network Dynamics and Simulation Sciences Laboratory,
+Biocomplexity Institute, Virginia Tech,
+Blacksburg, VA 24061.
+\textsf{Email:} \texttt{ssravi@vbi.vt.edu}. \smallskip
+}
+
+\setcounter{footnote}{3}
+\footnotetext[3]{
+Department of Computer Science,
+University at Albany -- State University of New York,
+Albany, NY 12222. \newline
+\textsf{Email:} \texttt{drosenkrantz@gmail.com} ~and~ 
+                \texttt{thestearns2@gmail.com}
+}
+
+\begin{center}
+\textbf{Abstract}
+\end{center}
+
+%%\begin{center}
+%%\fbox{\textbf{To be revised.}}
+%%\end{center}
+
+The Susceptible-Infected-Recovered (SIR) model of disease
+propagation is widely used in epidemiology.  
+Under this model, we study short-term forecasting problems
+where the goal is to predict a given system's 
+behavior a few time steps into the future. 
+An example of such a problem is the following: find
+the probability that there will be at least $q$ new
+infections at time $t$.
+We show that several such forecasting problems are computationally
+intractable even when the specified time horizon $t$ is as small as 2.
+We also present a result that shows the difficulty of obtaining
+approximate solutions to these forecasting problems.
+We demonstrate that our complexity results are tight by 
+showing that the problems
+are efficiently solvable for appropriate lower values of $t$.
+Our hardness results also hold for realistic social networks
+(e.g. power-law networks, small world networks).
+We also provide efficient randomized approximation
+algorithms for some forecasting problems.
+Further, we extend our results to many other epidemiologically
+relevant measures and to several other epidemic models.
+
+\bigskip\bigskip
+
+\noindent
+\textbf{Note:}~ This report consists of two parts. 
+\begin{itemize}
+\item
+Part~1, an abbreviated version of this report,
+presents an overview of the problems considered, statements of results and 
+their implications.
+
+\item
+Part~2 contains formal statements of problems and results as well 
+as detailed proofs.
+\end{itemize}
+
+\smallskip
+\noindent
+To ensure that both parts are reasonably self-contained,
+some of the text in Part~1 also appears in Part~2.
+
+
+%%\begin{center}
+%%\fbox{\fbox{\Large{\textbf{Please Do Not Distribute}}}}
+%%\end{center}
+
+\iffalse
+%%%%%%%
+\bigskip\bigskip
+
+
+\noindent
+\textbf{Acknowledgments:}~ 
+This work has been partially supported by
+DTRA Grant HDTRA1-11-1-0016 and 
+DTRA CNIMS Contract HDTRA1-11-D-0016-0010.
+%%%%%%
+\fi
+
+\setcounter{page}{0}
+\clearpage
+\thispagestyle{empty}
+
+\vspace*{4in}
+
+\begin{center}
+\fbox{\Large{\textbf{Part 1:~ Overview of Problems and Results}}}
+\end{center}
+
+\setcounter{page}{0}
+\clearpage
+
+%%% New commands for the three state values.
+\newcommand{\sstate}{\mbox{$\mathbb{S}$}}
+\newcommand{\istate}{\mbox{$\mathbb{I}$}}
+\newcommand{\rstate}{\mbox{$\mathbb{R}$}}
+
+%% New command for the set with the above three values.
+\newcommand{\bset}{\mbox{\{\sstate, \istate, \rstate\}}} 
+
+\baselineskip=1.05\normalbaselineskip
+
+\input{prob_names}  %%% Contains macros for problem names,
+
+\input{sec_00}   %% Overview of problems and results (Part 1)
+
+\clearpage
+\setcounter{page}{0}
+\thispagestyle{empty}
+
+\vspace*{4in}
+
+\begin{center}
+\fbox{\Large{\textbf{Part 2:~ Details Regarding Problem Formulations and Results}}}
+\end{center}
+
+\setcounter{page}{0}
+\setcounter{section}{0}
+\setcounter{table}{0}
+\clearpage
+\baselineskip=1.29\normalbaselineskip
+
+\input{sec_01}   %% Introduction.
+\input{sec_02}   %% SIR a SSyDS -- Model definitions.
+\input{sec_03}   %% Problem definitions and summary of results
+
+\input{sec_04}   %% Intractability results for Forecasting Problems:
+                 %% General networks.
+
+\input{sec_05}   %% Additional Intractability results for 
+                 %% Forecasting Problems:
+                 %% More realistic social networks.
+
+\input{sec_06}   %% Efficiently solvable or approximable versions
+                 %% of Forecasting Problems.
+
+\input{sec_07}   %% Extensions to other epidemic models.
+
+\input{experiments}
+
+\input{sec_08}   %% Conclusions, etc.
+
+%%% Bibliography.
+\clearpage
+\baselineskip=\normalbaselineskip
+
+%%\bibliographystyle{plain}
+\bibliographystyle{abbrv}
+\bibliography{sir_references.bib,epi-refs.bib}
+
+\clearpage
+
+\baselineskip=1.3\normalbaselineskip
+\input{appendix}
+
+\end{document}

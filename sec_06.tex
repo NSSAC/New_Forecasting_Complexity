@@ -1,0 +1,1642 @@
+\section{Efficiently Solvable or Approximable Versions of 
+Forecasting Problems}
+\label{sec:poly_versions}
+
+\subsection{Overview}
+
+This section presents efficient algorithms and approximations for some
+short-term forecasting problems.
+Results presented in this section include the following.
+
+\begin{description}
+\item{(a)}
+Section~\ref{sse:poly} presents a polynomial
+algorithm for a general version of the one step forecasting 
+problem.
+Efficient algorithms for \OneNewInfs, \OneTotInfs{}, \OneVuls{} and \OneTotVuls{}
+for any set $S$ follow directly from this general result.
+\item{(b)}
+Section~\ref{sss:two_step_poly} presents efficient algorithms for 
+\TwoNewInfs, \TwoTotInfs{}, \TwoVuls{} and \TwoTotVuls{} 
+when the set $S$ is of size $O(\log{n})$, where
+$n$ is the number of nodes in the underlying graph.
+The efficient solvability of these problems in
+conjunction with linearity of expectation \cite{MU-2005}
+implies that the expected number
+of newly infected nodes for 
+$t = 1$ and $t = 2$ can also be computed efficiently.
+\item{(c)}
+Section~\ref{sse:fpras_expected_inf} presents efficient 
+randomized approximation
+algorithms for the \tTotVuls{} and \tTotInfs{} problems, 
+as well as  for the problem of computing
+higher order moments of the total number of infections, by
+time $t$, when $t$ is \emph{fixed}.
+\end{description}
+
+\subsection{Efficient Algorithms for Restricted Versions of
+Forecasting Problems}
+\label{sse:poly}
+ 
+\subsubsection{Constrained Configuration Problems: Definitions}
+\label{sss:constrained_config}
+
+The notion of an $r$-\emph{symmetric} function with Boolean
+inputs was defined in \cite{BH+2007}.
+We now extend this definition to allow inputs
+from the set \bset.
+%% \{\sstate, \istate, \rstate\}.
+Throughout this section, we use $\mathcal{B}$ to denote the
+set $\{0,1\}$ of Boolean values.
+
+\begin{definition} \label{def:r_symm}
+Consider an $n$-input predicate $\lambda: \bset^{n} \longrightarrow \mathcal{B}$.
+Predicate $\lambda$ is \textbf{symmetric} if its value  
+depends only on how many of the inputs have values \sstate,
+\istate{} and \rstate{} respectively.
+(In particular, the value of $\lambda$ does \emph{not}
+depend on the order in which the input values are specified.)   
+
+Predicate $\lambda: \bset^{n} \longrightarrow \mathcal{B}$
+is \textbf{$r$-symmetric} if the set of $n$ inputs to $\lambda$ can be 
+partitioned into at most $r$ classes  
+such that the value of $\lambda$ depends only on how many of the   
+inputs in each of the $r$ classes have the values
+\sstate, \istate{} ~and~ \rstate.
+\end{definition}
+We note that a symmetric predicate is 1-symmetric.
+
+A \textbf{configuration constraint} $\lambda$ on a SIR system \cals{} is a
+constraint, that is, a predicate, on a configuration of \cals{}.  
+If the underlying graph $G(V,E)$ contains $n$ nodes,
+then $\lambda$ is a predicate on the $n$ node values in the configuration. 
+An \textbf{$r$-symmetric configuration constraint} 
+$\lambda$ is a configuration constraint that is $r$-symmetric.
+Each class of inputs
+$\nu$ to an $r$-symmetric configuration constraint $\lambda$ is a
+subset of nodes of $G$.  
+We now present some examples of $r$-symmetric predicates.
+
+\begin{example}\label{ex:r_symm}
+Let \cals{} be an SIR system with $n$ nodes.
+\begin{description}
+\item{(a)} 
+Consider the configuration constraint $\lambda_{\textsc{NewInf},S}$,
+which, for a specified integer value $q$,
+is true for configuration \calc{} of system \cals{} ~iff~
+there are at least $q$ members of node set $S$ whose state in \calc{} is $\istate$.
+This configuration constraint is 2-symmetric,
+since its inputs can be partitioned into two classes: one class consisting of 
+the node set $S$ and the other class consisting of all the remaining nodes.
+(If \calc{} represents the configuration of \cals{} at time $t$,
+then $\lambda_{\textsc{NewInf},S}(\calc)$ is true iff there are at least 
+$q$ new infections among the nodes in $S$ at time $t$.)
+
+\item{(b)} 
+Consider the configuration constraint $\lambda_{\textsc{TotInf},S}$,
+which, for a specified integer value $q$,
+is true for configuration \calc{} of system \cals{} ~iff~
+there are at least $q$ members of node set $S$ 
+whose state in \calc{} is either \istate{} or \rstate{}.
+This configuration constraint is also 2-symmetric.
+(If \calc{} represents the configuration of \cals{} at time $t$,
+then $\lambda_{\textsc{TotInf}}(\calc)$ 
+is true iff there are at least $q$ infections among the nodes in $S$ by time $t$)
+%, assuming 
+%that no node of \cals{} was in state \rstate{} at time 0.)
+
+\item{(c)} 
+Consider the configuration constraint $\lambda_{\textsc{Vul},S}$,
+which is true for configuration \calc{} of \cals{} iff
+all members of node set $S$ are in state \istate{} in \calc{}.
+This configuration constraint is also 2-symmetric.
+
+\item{(d)} 
+Consider the configuration constraint $\lambda_{\textsc{TotVul},S}$,
+which is true for configuration \calc{} of \cals{} iff 
+all members of node set $S$ are in either state \istate{} or state \rstate{}.
+This configuration constraint is also 2-symmetric.
+
+\item{(e)} 
+Suppose the nodes of~ \cals{} are partitioned into
+two subsets $V_1$ and $V_2$, where $V_1$ and $V_2$ are respectively the sets of nodes
+corresponding to children (say, age $< 18$) and 
+adults (i.e., age $\geq 18$) in the population.
+For a given configuration \calc,
+let $N_i$ be the the number of nodes in $V_i$ 
+that are in state \istate{} in \calc, $i = 1, 2$.
+Consider the configuration constraint $\lambda_{\textsc{ChildAdult}}$,
+which, for a specified integer value $q$,
+is true for configuration \calc{} of \cals{} iff
+$|N_1 - N_2| \leq q$.
+(If \calc{} represents the configuration of \cals{} at time $t$,
+then $\lambda_{\textsc{ChildAdult}}(\calc)$ is true iff the difference between number of infected children
+and the number of infected adults at time $t$ is at most $q$.) 
+Constraint  $\lambda_{\textsc{ChildAdult}}$ is 2-symmetric,
+since its inputs can be partitioned into two classes,
+namely $V_1$ and $V_2$.   
+\hfill $\Box$
+\end{description}
+\end{example}
+
+An $n$-input symmetric configuration constraint $\lambda$ can be specified using
+a table with $(n+1)^2$ rows, with the $i^{\rm{th}}$ 
+row specifying the value of $\lambda$ for 
+the pair $(x_i, y_i)$, where $x_i$ and $y_i$ are
+the number of inputs with values \sstate{} and \istate{}
+respectively and $0 \leq x_i, y_i \leq n$.
+(Since the configuration constraint has $n$ inputs, the number of inputs
+in state \rstate{} is equal to $n-x_i-y_i$.) 
+In general, an $r$-symmetric configuration constraint with $n$ inputs
+can be specified using a table with at most $(n+1)^{2r}$ rows,
+where each row represents the number of inputs 
+having values \sstate{} and \istate{}
+in each of the $r$ classes of $\lambda$.
+
+In the remainder of this section, when we use $r$-symmetric configuration constraints,
+we assume that $r$ is a \emph{fixed} integer which is independent
+of the problem instance.   
+We also assume that each $r$-symmetric configuration constraint is specified
+through a table as described above, or that
+the table can be constructed in polynomial
+time from the given system \cals{}.
+
+\newcommand{\tcpp}{\mbox{$t$}-\textsc{Cpp}}
+
+\begin{definition} \label{def:t_config}
+The \textbf{$t$-configuration probability problem} (\tcpp)
+for an SIR system is defined as follows:
+given an SIR system \cals{}, an initial configuration \cali{}, a non-negative
+integer $t$, and a configuration constraint $\lambda$, compute
+the probability that  after exactly $t$ steps, the given system
+\cals{}, starting in configuration \cali{}, reaches a configuration
+satisfying constraint $\lambda$.
+\end{definition}
+
+The {\tNewInfs}, {\tTotInfs}, {\tVuls} and {\tTotVuls} problems are all 2-symmetric \tcpp{}s,
+since they can be expressed using configuration constraints  
+$\lambda_{\textsc{NewInf},S}$, $\lambda_{\textsc{TotInf},S}$, $\lambda_{\textsc{Vul},S}$
+and $\lambda_{\textsc{TotVul},S}$, as discussed in Example~\ref{ex:r_symm}.
+%% A more complex 2-symmetric configuration constraint is that the fraction
+%% of children who are infected by time $t$ is more than twice the
+%% fraction of adults who are infected.
+
+
+
+\subsubsection{One Step Constrained Configuration Problems}
+\label{sss:one_step_poly}
+  
+We now provide some additional definitions that will enable
+us to develop an efficient algorithm for a general class
+of constrained configuration problems that model one step
+forecasting problems.
+(Recall from our results in 
+Sections~\ref{sec:general_results} and \ref{sec:realistic}
+that, in general, forecasting problems involving two or more time steps
+are computationally intractable.)
+
+Consider a given SIR system $\cals{}$, with node set $V$ and 
+initial configuration $\cali{}$. 
+Note that all nodes that are in state $\istate$ or $\rstate$ in
+configuration $\cali{}$ are in state $\rstate$ in the configuration
+reached after one step.  A node that is in state $\sstate$  in
+$\cali{}$ might be in state $\sstate$ or state $\istate$ in the
+configuration reached after one step.  
+Given initial configuration $\cali{}$,
+we define a configuration $\calc{}$ of system $\cals{}$
+to be $\cali{}$--\textbf{valid}
+if every node that is in state $\istate$ in  $\calc{}$
+is in state $\sstate$ in  $\cali{}$.
+Note that every one-step configuration reached from $\cali{}$ is $\cali{}$--valid.
+
+\newcommand{\nus}{\mbox{$\nu_{\mathbb{S}}$}}
+\newcommand{\nui}{\mbox{$\nu_{\mathbb{I}}$}}
+\newcommand{\nur}{\mbox{$\nu_{\mathbb{R}}$}}
+
+Consider an $r$-symmetric configuration constraint $\lambda$.  
+Let $\kappa_{\lambda}$ denote the set of at most $r$ classes of inputs
+to constraint $\lambda$.  
+For each class $\nu  \in \kappa_{\lambda}$,
+let \nus{},~ \nui{} and \nur{} 
+denote, respectively, the members of $\nu$ that are in state 
+\sstate, \istate{} and \rstate{} in $\cali$. 
+
+For an $r$-symmetric configuration constraint $\lambda$
+and an initial configuration $\cali{}$,
+a $(\lambda,\cali{})$--\textbf{signature} is a function 
+$g : \kappa_{\lambda} \longrightarrow \mathbb{N}$~, 
+such that for each class $\nu$  in
+$\kappa_{\lambda}$, the value of $g(\nu)$ does not exceed $|\nus{}|$.
+We let $\Gamma_{\mathcal{I}}^{\lambda}$ denote the
+set of all possible $(\lambda,\mathcal{I})$--signatures.  
+Note that when
+$r$ is a constant, $|\Gamma_{\mathcal{I}}^{\lambda}|$ is bounded by
+$(n+1)^r$, a polynomial function of the number of nodes in $G$.
+
+\medskip
+For a given $r$-symmetric configuration constraint $\lambda$
+and initial configuration $\cali{}$,
+we define a function,
+denoted by $sig_\lambda$, 
+which maps each $\cali{}$--valid configuration $\calc{}$
+into a $(\lambda,\cali{})$--signature, as follows.
+For a given $\cali{}$--valid configuration $\calc{}$,
+$sig_\lambda(\calc)$ is the $(\lambda,\cali{})$--signature
+such that for each $\nu  \in \kappa_{\lambda}$,
+$sig_\lambda(\calc)(\nu)$
+equals the number of nodes in $\nu$
+that have value $\istate$ in $\calc$.
+We refer to $sig_\lambda(\calc)$ as 
+the $(\lambda,\cali{})$--signature \textbf{associated} 
+with $\calc$.
+%The concept of an associated $(\lambda,Y,\cali{})$--signature will be used in our 
+%algorithm for the 1-configuration probability problem discussed below. 
+
+Let $\calc$ be a configuration reached from configuration ${\cali}$ after {\bf one} step.
+For a class  $\nu  \in \kappa_{\lambda}$,
+let $x$ denote the value of $sig_\lambda(\calc)(\nu)$.
+Then $\calc_{\nu}$ has $x$ nodes in state \istate{},
+$|\nus{}| - x$ nodes in state $\sstate$,
+and $|\nu| - |\nus|$ nodes in state $\rstate$.
+Since this holds for every class in  $\kappa_{\lambda}$,
+the value of predicate $\lambda$ on $C$ is determined by 
+the associated $(\lambda,\cali{})$--signature $sig_\lambda(\calc)$.
+We refer to $\widehat{\lambda}_{\mathcal{I}}$ as the predicate on 
+$(\lambda,\cali{})$--signatures that corresponds to $\lambda$. 
+More precisely, for $(\lambda,\cali{})$--signature $g$,
+$\widehat{\lambda}_{\mathcal{I}}(g)$ is true iff
+$\lambda$ is true for configurations for which for each class $\nu$,
+the number of nodes in state $\istate{}$ is $g(\nu)$,
+the number of nodes in state $\sstate{}$ is $|\nus{}| - g(\nu)$,
+and the number of nodes in state $\rstate$ is $|\nu| - |\nus|$.
+Note that given a pair consisting of 
+the table specifying $r$-symmetric predicate $\lambda$
+and initial configuration ${\cali}$,
+a table specifying function $\widehat{\lambda}_{\mathcal{I}}$ 
+can be constructed in linear time.
+Thus, without loss of generality, we can henceforth assume that 
+such a specification of function $\widehat{\lambda}_{\mathcal{I}}$
+is available.
+
+As described in the next result, a compiler can be constructed
+that for any fixed $r$, runs in polynomial time,
+and solves the $1$-configuration probability problem
+for {\bf any} $r$-symmetric configuration constraint.
+
+
+\begin{theorem}  \label{th:one-step-forecasting}
+For any fixed $r$, 
+there is a polynomial time algorithm for 
+the $1$-configuration probability problem,
+given an $r$-symmetric configuration constraint.
+\end{theorem}   
+
+\noindent  
+\textbf{Proof:}~   
+Suppose we are given SIR system $\cals{}$, 
+initial configuration \cali{},  and $r$-symmetric configuration constraint $\lambda$.
+For each node $v$ of the underlying graph of \cals{},
+let $p(v)$ be the probability that node $v$ is in
+state $\istate$ at time 1, given that the configuration of \cals{}
+at time 0 is \cali.
+
+Recall that for each class $\nu$ of $\kappa_{\lambda}$,
+the members of $\nu$ that are in state 
+\sstate, \istate{} and \rstate{} in $\cali$
+are denoted as \nus{},~ \nui{} and \nur{} . 
+Note that at most $|\nus|$ member of $\nu$ 
+can be in state \istate{}  at time 1.
+Let the members of \nus{} be $\{u^{\nu}_1, \ldots, u^{\nu}_{|\nus|}\}$.  
+For $0 \leq j \leq |\nus|$, 
+let $R^{\nu}_j = \{u^{\nu}_1, \ldots, u^{\nu}_j\}$.
+Note that $R^{\nu}_0$ has no members.
+%and let $n^{\nu}_j$ denote the number of nodes of $R^{\nu}_j$ 
+%that are in state \sstate{} in $\cali$. 
+Let $P_j^{\nu}$, $0 \leq j \leq |\nus|$, 
+be a function that assigns to each  value $a$, where $0 \leq a \leq j$,
+the probability that exactly $a$ members of  $R^{\nu}_j$ 
+are in state \istate{}  at time 1.
+
+Note that the only dependence of these functions $P_j^\nu$
+on predicate $\lambda$ is a specification of which nodes of system \cals{} 
+are in each of the classes of $\lambda$.
+Thus, the computation of these functions $P_j^\lambda$ 
+can be done in an identical manner for
+all $\lambda$ with the same node classes.
+
+For each class $\nu$, we now show how to calculate $P_j^\nu$, $0 \leq j \leq  |\nus|$,
+using dynamic programming.
+First, note that since $R_0^\nu$ contains no nodes,
+the domain of $P_0^\nu$ consists of the single value $a = 0$.
+So, $P_0^\nu(0) = 1$.
+
+After having computed $P_j^\nu$ for some $j$,
+we can compute$P_{j+1}^\nu$ as follows.
+
+\begin{enumerate}
+\item 
+$P_{j+1}^\nu(0) ~=~ P_j^\nu(0) (1 - p(u^{\nu}_{j+1}))$.  
+
+\item  
+$P_{j+1}^\lambda(j+1) ~=~ P_j^\lambda(j) p(u^{\nu}_{j+1})$.  
+
+\item For $0 < a \leq j$,
+$P_{j+1}^\lambda(a) ~=~ P_j^\lambda(a) (1 - p(u^{\nu}_{j+1})) 
+                        + P_j^\lambda(a-1) p(u^{\nu}_{j+1})$.
+\end{enumerate}
+
+Let $P^\lambda$ be the function that assigns to each signature $g$ in
+$\Gamma_{\mathcal{I}}^{\lambda}$~ the probability that $g$ is the
+$(\lambda,\cali{})$--signature associated with the configuration
+reached after one step.
+Then, $P^\lambda$ can be computed as follows.
+For each $g$ in $\Gamma_{\mathcal{I}}^{\lambda}$,
+
+\[ \displaystyle{
+P^\lambda(g) ~=~  \prod_{\nu \in \kappa_{\lambda}} P_{|\nus|}^\nu}(g(\nu))
+\]
+
+Note that the computation of function $P^\lambda$ can be done in an
+identical manner for all  $\lambda$ with the same node classes.
+
+Note further that the set of all configurations reached at at time 1
+is partitioned into blocks by their signatures:
+all configurations with the same associated 
+$(\lambda,\cali{})$--signature 
+are in the same block of this partition.
+Moreover, all configurations reached at time 1
+that have the same signature 
+have the same truth value with respect to constraint $\lambda$,
+as specified by predicate $\widehat{\lambda}_{\mathcal{I}}$.
+Let $\Psi(\lambda, \cali)$ denote the set of all
+signatures $g \in \Gamma_{\mathcal{I}}^{\lambda}$~
+such that $\widehat{\lambda}_{\mathcal{I}}(g)$ is true.
+Thus, given $P^\lambda$, we can solve the 
+1-configuration probability problem for $\lambda$
+by summing $P^{\lambda}(g)$ over all 
+$(\lambda,\cali{})$--signatures $g \in \Psi(\lambda, \cali)$;
+that is, the solution is given by 
+$\displaystyle{\sum_{g \in \Psi(\lambda, \mathcal{I})} P^{\lambda}(g)}$.
+Note that given a table specifying predicate $\widehat{\lambda}_{\mathcal{I}}$,
+this summation can be carried out automatically.
+
+\medskip
+We now consider the running time of the above algorithm.  
+For each node $v$,
+$p(v)$ can be computed in time proportional to the number of neighbors
+of node $v$, so the time required to compute $p(v)$ for all nodes
+$v$ is linear in the size of $G$.  For fixed $r$, the time to
+compute functions $P^\lambda$ is
+polynomial in $n$.  (If $r = 1$, it is quadratic in $n$.)
+\QED
+  
+\begin{corollary}\label{cor:gen_easy_time_1}
+The following problems can be solved in time linear in the size of the underlying graph:
+(a) \OneNewInfs, (b) \OneTotInfs{}, (c) \OneVuls{} ~and \\ (d) \OneTotVuls{}.
+\end{corollary}
+
+\noindent
+\textbf{Proof:}~ Algorithms for these four problems follow directly 
+from the general result of Theorem~\ref{th:one-step-forecasting},
+but special properties of their predicates enable the algorithms to be made more efficient,
+as explained below.
+
+Each of the four above problems corresponds to a 2-symmetric constraint,
+where one node class of the constraint
+consists of the members of node set $S$. 
+The other class consists of the remaining nodes;
+we denote this class as $S'$. 
+We recall that $S_{\sstate}$ denotes the members of class $S$
+that are in state ${\sstate}$ in configuration $\cali{}$,
+and $S'_{\sstate}$ denotes the members of class $S'$
+that are in state ${\sstate}$ in configuration $\cali{}$.
+For any 2-symmetric constraint $\lambda$ involving these two node classes,
+a $(\lambda,\cali{})$--signature is a pair of
+integers $(a, b)$, where $0 \leq a \leq |S_{\sstate}|$ and $0 \leq b \leq |S'_{\sstate}|$. 
+
+Each of the four above  constraints $\lambda$ has the property that
+the value of $\widehat{\lambda}_{\mathcal{I}}((a,b))$
+is independent of $b$, so the state of the nodes in $S'$ in a configuration $C$ is irrelevant.
+This property enables us to simplify the algorithm by processing only the members of set $S$,
+thereby implicitly compressing all 2-dimensional signatures with the same value of $a$
+into a single value, as described below.
+%Thus the set of compressed signatures is the set of values $a$ such that $0 \leq a \leq |S_{\sstate}|$.
+
+%Let $n' = | S |$.
+For each \cali{}--valid configuration,
+the associated signature 
+can be represented as a single integer $a$ that
+equals the number of nodes of set $S_{\sstate}$  
+that are in state \istate{} at time 1.
+(Note that $0 \leq a \leq |S_{\sstate}|$.)
+We call this value $a$ a {\bf compressed} signature.
+Suppose that we construct function $P_{|S_{\sstate}|}^S$,
+as described in the proof of Theorem~\ref{th:one-step-forecasting}.
+Note that $P_{|S_{\sstate}|}^S(a)$
+%Let $P^{\lambda}$, $0 \leq j \leq n'$, 
+assigns to each compressed
+signature value $a$
+the probability that $a$ is the
+associated $(\lambda,\cali{})$ compressed signature of the configuration
+reached after one step.
+
+For each of the four predicates $\lambda$ under consideration,
+the set of compressed signatures is the set of values 
+$a$ such that $0 \leq a \leq |S_{\sstate}|$.
+For each $\lambda$, let $\widehat{\lambda}_{\mathcal{I}}$ denote the corresponding
+predicate on compressed signatures.
+Let $\Psi(\lambda, \cali)$ denote the set of compressed signatures $a$
+%$ \Gamma_{V,\,\mathcal{I}}^{\lambda}$~
+such that $\widehat{\lambda}_{\mathcal{I}}(a)$ is true.
+Thus, given $P_{|S_{\sstate}|}^S$, we can solve the 
+1-configuration probability problem for $\lambda$
+by summing $P_{|S_{\sstate}|}^S(a)$ over all 
+values $a$ in $\Psi(\lambda, \cali)$;
+that is, the solution is given by 
+$\displaystyle{\sum_{a \in \Psi(\lambda, \mathcal{I})} P_{|S_{\sstate}|}^S(a)}$.
+For each of the four problems $P_{|S_{\sstate}|}^S$ is the same, 
+but $\widehat{\lambda}_{\mathcal{I}}$ is different.
+
+%Note that given a table specifying predicate $\widehat{\lambda}_{\mathcal{I}}$,
+%this summation can be carried out automatically.
+
+First consider the \OneNewInfs{} problem, where we want to compute 
+the probability that at least $q$ members of set $S$ are infected at $t = 1$.
+The predicate $(\widehat{\lambda}_{{\textsc{NewInf},S}})_{{\mathcal{I}}}(a)$ 
+is true iff $a \geq q$.
+Thus, the answer to the \OneNewInfs{} problem is given by
+$\displaystyle{\sum_{a=q}
+                    ^{|S_{\sstate}|}
+                    P_{|S_{\sstate}|}^S(a)}$.
+
+
+
+Now consider the \OneTotInfs{} problem,
+where we want to compute 
+the probability that at least $q$ members of set $S$ are infected by $t = 1$,
+and so can have been infected before time 1.
+The only difference here is that the
+predicate $\widehat{\lambda}_{{\textsc{TotInf},S}_{\mathcal{I}}}(a)$ is 
+true iff $q \leq a +  |S_{\istate}| + |S_{\rstate}|$.
+Thus, the answer is given by 
+$\displaystyle{\sum_{a=q - |S_{\istate}| - |S_{\rstate}|}
+                    ^{|S_{\sstate}|}
+                    P_{|S_{\sstate}|}^S(a)}$.
+
+
+Next, consider the \OneVuls{} problem.
+Here, predicate $\widehat{\lambda}_{{\textsc{OneVul},S}_{\mathcal{I}}}(a)$ is 
+true iff $a = |S|$.
+If $|S_{\sstate}| < |S|$, then $\Psi(\lambda, \cali)$ is empty,
+so the sum contains no terms, and evaluates to 0.
+If $|S_{\sstate}| = |S|$, then the sum contains only term, 
+namely 
+$P_{|S_{\sstate}|}^S(|S|)$.
+
+Next, consider the 
+\OneTotVuls{} problem.
+Here, predicate $\widehat{\lambda}_{{\textsc{OneTotVul},S}_{\mathcal{I}}}(a)$ is 
+true iff $a +  |S_{\istate}| + |S_{\rstate}| = |S|$.
+Thus, the sum contains only one term, namely
+$P_{|S_{\sstate}|}^S(|S| - |S_{\istate}| - |S_{\rstate}|)$.
+\QED
+
+%% Note that \OneVul{} can be solved more simply by just computing $p_i$ 
+%% for the node $v_i$ whose vulnerability is to be computed.
+
+
+
+\subsubsection{Two Step Constrained Configuration Problems}
+\label{sss:two_step_poly}
+  
+%\newcommand{\calsp}{\mbox{${\cal S}'$}}  
+\newcommand{\calspp}{\mbox{${\cal S}''$}} 
+
+
+We now present efficient
+algorithms for the \TwoNewInfs{},~ \TwoTotInfs{},\\
+\TwoVuls{} ~and~ \TwoTotVuls{} 
+problems for the case when node set $S$ is relatively small.
+
+For pairwise disjoint sets of nodes $S_1$, $S_2$, and $S_3$,
+let $\psi(S_1, S_2, S_3)$
+denote the probability that all members of $S_1$ are infected at time 1,
+all members of $S_2$ are infected at time 2,
+and no member of $S_3$ is infected by time 2.
+
+\begin{theorem}\label{thm:generalized_vulnerability_time_2}
+For pairwise disjoint sets of nodes $S_1$, $S_2$, and $S_3$,
+where  set $S_2$ is of size $O(\log{n})$,
+the probability value $\psi(S_1, S_2, S_3)$ can be computed in polynomial time.
+\end{theorem}
+\noindent
+\textbf{Proof:}~  
+If $S_1 \cup S_2 \cup S_3$ contains an index node, that is,
+a node which is infected at time 0, clearly $\psi(S_1, S_2, S_3) = 0$.
+Thus, without loss of generality we can assume that 
+no member of the three given node sets is an index node.
+
+Our algorithm begins by modifying the given SIR system $\cals{}$ and initial configuration, 
+if necessary, by combining all the index
+nodes into a single new index node, creating a modified SIR system
+$\calsp{}$.  (If there is only one index node, then $\calsp{}$ is
+the same as $\cals{}$.) Let us call this new index node $u_0$.
+Consider any node $v$ such that $v$ is not an index node for $\cals{}$ and  
+there is at least one edge between any index node 
+for $\cals{}$ and $v$.
+Let $E_v = \{e_1, e_2, \ldots, e_r\}$ denote the set of all
+edges of \cals{} between $v$ and the index nodes of \cals.
+In \calsp, all the edges in $E_v$ are replaced by a 
+single new edge $e' = \{u_0, v\}$. 
+The transmission probability $p_{e'}$ of $e'$ is the
+probability of transmission via at least one of the edges being
+replaced; in other words,
+\[ \displaystyle{
+p_{e'} ~=~ 1- \prod_{i=1}^{r} (1-p_{e_i})}
+\]
+Note that the probability that any given node is infected at any given time
+is the same in $\cals{}$ and $\calsp{}$.
+
+Let $q_1$ denote the probability in system $\calsp{}$
+that all members of $S_1$ are infected at time 1.
+If $S_1$ contains a node that is not connected to $u_0$, then $q_1 = 0$. 
+Otherwise,
+$q_1 = \displaystyle{
+\prod_{v \in S_1} p_{\{u_0,v\}} }$.
+
+Let $q_2$ denote the probability in system $\calsp{}$
+that no member of $S_2 \cup S_3$ is infected at time 1.
+To compute $q_2$,
+let $S_4$ denote the set of members $v$ of $S_2 \cup S_3$ 
+such that system $\calsp{}$ contains the edge $\{u_0, v\}$.
+Then, $q_2 = \displaystyle{
+\prod_{v \in S_4} (1 - p_{\{u_0,v\}}) }$.
+
+Let $\calspp$ be the SIR system obtained from system $\calsp$ by deleting 
+all the edges from node $u_0$ to members of $S_4$,
+and changing the probability of any edge between $u_0$ and a member of $S_1$ 
+to probability value 1.
+Then $\psi(S_1, S_2, S_3)$ for  SIR system $\calsp$ 
+is the product of the three factors $q_1$, $q_2$, and
+the value of $\psi(\emptyset, S_2, S_3)$ for  SIR system $\calspp$.
+%Wlog, we subsequently assume that $q_1 > 0$.
+Note that no member of $S_2 \cup S_3$ can be infected at time 1 in $\calspp$.
+
+We now consider computing $\psi(\emptyset, S_2, S_3)$ for  SIR system $\calspp$.
+Let $U=\{u_1,\ldots,u_k\}$ denote the set of nodes such that for each
+$u_i\in U$, $\calspp{}$ contains the edge $\{u_0, u_i\}$ and also contains an edge $\{u_i, v\}$
+for some $v\in (S_2 \cup S_3)$. 
+If $k = 0$ and $S_2$ is nonnull, then $\psi(\emptyset, S_2, S_3) = 0$. 
+If $k = 0$ and $S_2$ is null, then $\psi(\emptyset, S_2, S_3) = 1$. 
+Thus, without loss of generality, we can assume that $k \geq 1$.
+For $1 \leq i \leq k$, let $U_i$ denote the set of $i$ nodes $\{u_1,\ldots,u_i\}$.
+% let $S_3^i$ denote the members of $S_3$ that are neighbors of $u_i$.
+
+For disjoint node sets $W_1$ and $W_2$ from $\calspp{}$, such that neither node set contains  $u_0$,
+let $E(W_1, W_2)$ denote the set of edges in $\calspp{}$
+such that one endpoint of the edge is in $W_1$ and the other endpoint is in $\{u_0\} \cup W_2$.
+For any set of edges $E'$ from $\calspp{}$,
+let $\mathcal{S}''[E']$ denote the SIR system obtained from $\calspp{}$
+by retaining the edges in $E'$
+and removing the edges not in $E'$.
+Note that $\psi(\emptyset, S_2, S_3)$ for SIR system $\calspp$
+equals the value of $\psi(\emptyset, S_2, S_3)$ for SIR system 
+$\mathcal{S}''[E(U_k, S_2 \cup S_3)]$.
+
+For $1 \leq i \leq k$ and a set of nodes $Y$ in system $\calspp{}$, 
+let $N_i(Y)$ denote 
+the set of nodes $v\in Y$
+such that $\{u_i, v\}$ is an edge in system $\calspp{}$,
+i.e., the members of $Y$ that are neighbors of $u_i$.
+%If $T= \emptyset$, then $f(i+1, S') = f(i, S')$. 
+%Suppose $T \neq \emptyset$. 
+(Note that SIR system $\mathcal{S}''[E(\{ u_i  \}, S_2 \cup S_3)]$
+is identical to SIR system $\mathcal{S}''[E(\{ u_i  \}, N_i(S_2 \cup S_3))]$.)
+
+For each $i$ such that $1 \leq i \leq k$, $S_2' \subseteq S_2$ and $T \subseteq N_i(S_2')$,
+we define $g^i_{S_2'}(T)$ to be
+the value of $\psi(\phi, T, N_i(S_2' \cup S_3) - T)$ in SIR system
+$\mathcal{S}''[E(\{ u_i \}, S'_2 \cup S_3)]$,
+i.e., the probability that
+all the nodes in $T$ are infected at time 2, 
+and none of the {\em other} nodes in $N_i(S_2' \cup S_3)$ are infected at time 2.
+The value of $g^i_{S_2'}(T)$ can be computed as follows.
+
+If $T$ is nonempty, then in order for the nodes in $T$ to be infected at time 2, 
+node $u_i$ must be infected at time 1.
+So $g^i_{S_2'}(T)$ can be computed as:
+\[
+g^i_{S_2'}(T) = 
+\psi(\phi, T, N_i(S_2' \cup S_3) - T) = 
+p_{\{u_0,u_i\}}\prod_{v \in T} p_{\{u_i,v\}} \prod_{v \in N_i(S_2' \cup S_3) - T} (1-p_{\{u_i,v\}}).
+\]
+If $T$ is null, i.e., $\phi$, then $g^i_{S_2'}(\phi)$ 
+can be computed as:
+\[
+g^i_{S_2'}(\phi) = 
+\psi(\phi, \phi, N_i(S_2' \cup S_3)) = ( 1 - p_{ \{u_0,u_i\} }) \, + \,
+p_{\{u_0,u_i \}} \prod_{v \in N_i(S_2' \cup S_3)} (1-p_{\{u_i,v\}}).
+\]
+
+Note that all the $g^i_{S_2'}$ functions can be computed in time 
+$O(2^{|S_2|})$ times a polynomial in the size of the underlying graph.
+
+For $1 \leq i \leq k$ and a node set $S'_2 \subseteq S_2$, let $f(i, S'_2)$ denote
+$\psi(\phi, S'_2, S_3)$ in SIR system $\mathcal{S}''[E(U_i, S'_2 \cup S_3)]$,
+i.e., the probability that all nodes in $S'_2$ are infected at time 2,
+and no node in $S_3$ is infected by time 2.
+Then, $\psi(\phi, S_2, S_3)$ 
+in system \calspp{} is precisely $f(k, S_2)$.
+
+The set of quantities $f(i, S_2')$ for all $S'_2 \subseteq S_2$,
+can be computed by dynamic programming, as discussed below.
+
+First consider each of the quantities $f(1, S'_2)$,
+where $S'_2\subseteq S_2$.
+If any node in $S'_2$ is not a neighbor of node $u_1$, 
+then $f(1, S'_2)=0$. 
+Otherwise, when every node in $S'_2$ is a neighbor of $u_1$, 
+$f(1, S'_2) = g^1_{S_2'}(S_2'),$
+which can be computed as described above (with $T = S_2'$).
+
+Now, assume that $f(i, S'_2)$ has been computed for some $i<k$ and for every $S'_2 \subseteq S_2$.
+We then consider $f(i+1, S'_2)$ for each $S'_2 \subseteq S_2$. 
+We claim that
+\begin{equation} \label{eq:recurrence_for_f}
+f(i+1, S_2') = \sum_{T \subseteq N_{i+1}(S_2')} g^{i+1}_{S_2'}(T)f(i, S_2'-T).
+\end{equation}
+From this claim, it follows that when $|S_2|=O(\log{n})$,
+$f(i+1, S_2')$ can be computed in polynomial time,
+and consequently  that $f(k, S_2)$ can be computed in polynomial time. 
+Putting all these steps together,  
+when $|S_2|=O(\log{n})$,
+the value of $\psi(S_1, S_2, S_3)$ for system $\cals{}$
+can be computed in polynomial time.
+
+We now prove the claim given by Equation~(\ref{eq:recurrence_for_f}). 
+Note that $E(U_{i+1}, S_2' \cup S_3)$ consists of two disjoint sets of edges:
+$E(U_i, S_2'  \cup S_3)$ and  $E( \{u_{i+1}\}, S_2' \cup S_3')$.
+The spread of infections at times 1 and 2 through these two sets of edges is independent.
+For a node in $S_3$ to be not infected by time 2 in SIR system $\mathcal{S}''[E(U_{i+1}, S'_2 \cup S_3)]$,
+it must be uninfected by time 2 both in system $\mathcal{S}''[E(U_i, S'_2 \cup S_3)]$,
+and in system $\mathcal{S}''[E(\{u_{i+1}\}, S'_2 \cup S_3)]$.
+For a node in $S_2'$ to be infected at time 2 in SIR system $\mathcal{S}''[E(U_{i+1}, S'_2 \cup S_3)]$,
+it must either be infected at time 2 in system $\mathcal{S}''[E(U_i, S'_2 \cup S_3)]$,
+or be infected at time 2 in system $\mathcal{S}''[E(\{u_{i+1}\}, S'_2 \cup S_3)]$, or both.
+
+For each $i$ such that $1 \leq i < k$, $S_2' \subseteq S_2$, $T \subseteq N_{i+1}(S_2')$,
+and $T' \subseteq N_{i+1}(S_2')$, such that $T \neq T'$,
+the event that in SIR system $\mathcal{S}''[E(\{ u_{i+1} \}, S'_2 \cup S_3)]$
+all the nodes in $T$ are infected at time 2, 
+and none of the nodes in $N_{i+1}((S_2' -T) \cup S_3)$ are infected at time 2,
+is distinct from the event that 
+all the nodes in $T'$ are infected at time 2, 
+and none of the nodes in $N_{i+1}((S_2' -T') \cup S_3)$ are infected at time 2.
+Thus, $g^{i+1}_{S_2'}(T)$ and $g^{i+1}_{S_2'}(T')$ correspond to disjoint events.
+Consequently, $f(i+1, S_2')$ equals the sum over all $T \subseteq N_i(S_2')$,
+of the product of $g^{i+1}_{S_2'}(T)$
+and the conditional probability that 
+in SIR system $\mathcal{S}''[E(U_{i+1}, S'_2 \cup S_3)]$,
+all nodes in $S'_2$ are infected at time 2,
+and no node in $S_3$ is infected  at time 2,
+given that in SIR system $\mathcal{S}''[E(\{ u_{i+1} \}, S'_2 \cup S_3)]$,
+all the nodes in $T$ are infected at time 2, 
+and none of the nodes in $N_{i+1}((S_2' -T) \cup S_3)$ are infected at time 2.
+This conditional probability is the probability that
+in SIR system $\mathcal{S}''[E(U_i, S'_2 \cup S_3)]$,
+all nodes in $S'_2 - T$ are infected at time 2,
+and no node in $S_3$ is infected by time 2, i.e.,
+precisely $f(i, S_2'-T)$.
+\QED
+
+\begin{corollary}\label{cor:4probs_time_2}
+The following problems can be solved  in polynomial time
+for sets $S$ of size $O(\log{n})$: \\
+(a) \TwoNewInfs{}, (b) \TwoTotInfs{}, (c) \TwoVuls{} ~and\\
+(d) \TwoTotVuls{}.
+\end{corollary}
+\textbf{Proof:}~  
+Let $S_{\sstate}$, $S_{\istate}$, and$S_{\rstate}$ denote the members of node set $S$ 
+that are in state $\sstate$,   $\istate$, and  $\rstate$, respectively,
+in initial configuration $\cali{}$. 
+
+(a) 
+Let $q$ be the required number of nodes from $S$ to be in state $\istate$
+at time 2.
+Let $\cal T$ be the set of triples of the form $(S_1, S_2, S_3)$
+where $S_1$, $S_2$, and $S_3$ are pairwise disjoint node sets such that
+$S_1 \cup S_2 \cup S_3 = S_{\sstate}$ and $|S_2| \geq q$.
+Then the solution to the given \TwoNewInfs{} problem instance is 
+\[
+\sum_{(S_1, S_2, S_3) \in {\cal T} } \psi(S_1, S_2, S_3).
+\]
+
+(b) 
+Let $q$ be the required number of nodes from $S$ to be in state $\istate$ by time 2.
+Let $\cal T$ be the set of triples of the form $(S_1, S_2, S_3)$
+where $S_1$, $S_2$, and $S_3$ are pairwise disjoint node sets such that
+$S_1 \cup S_2 \cup S_3 = S_{\sstate}$ 
+and $|S_1| + |S_2| + |S_{\istate}| + |S_{\rstate} |  \geq q$.
+Then the solution to the given \TwoNewInfs{} problem instance is 
+\[
+\sum_{(S_1, S_2, S_3) \in {\cal T} } \psi(S_1, S_2, S_3).
+\]
+
+(c)
+The solution to the given \TwoVuls{} problem instance is $\psi(\phi, S, \phi)$.
+
+(d)
+Let $\cal T$ be the set of pairs of the form $(S_1, S_2)$
+where $S_1$ and $S_2$ are disjoint node sets such that
+$S_1 \cup S_2 = S_{\sstate}$.
+Then the solution to the given \TwoTotVuls{} problem instance is 
+\[
+\sum_{(S_1, S_2) \in {\cal T} } \psi(S_1, S_2, \phi).
+\]
+\QED
+
+Corollary~\ref{cor:4probs_time_2} can be generalized, based on the following concept.
+
+\begin{definition}\label{def:S_determined}
+A configuration constraint $\lambda$ on a SIR system $\cals{}$ is 
+{\em $S$-determined}, where $S$ is  a node set, if 
+for every configuration $\calc{}$ of system $\cals{}$,
+whether or not $\calc{}$ satisfies $\lambda$ 
+is determined by the projection of $\calc{}$ onto the node set $S$.
+\end{definition}
+
+Note that the four problems listed in Corollary~\ref{cor:4probs_time_2} 
+are each based on an $S$-determined configuration constraint.
+
+\begin{corollary}\label{cor:S_determined_time_2}
+For any $S$-determined configuration constraint $\lambda$,
+where $S$ is of size $O(\log{n})$,
+the 2-configuration probability problem for $\lambda$
+can be solved in polynomial time.
+\end{corollary}
+\textbf{Proof:}~  
+Let $S_{\sstate}$, $S_{\istate}$, and$S_{\rstate}$ denote the subsets of node set $S$ 
+that are in state $\sstate$,   $\istate$, and  $\rstate$, respectively,
+in initial configuration $\cali{}$. 
+Every node in $S_{\istate}\,\cup\,S_{\rstate}$ is in state $\rstate$ at time 2.
+Thus, the 2-configuration probability problem for $S$-determined 
+configuration constraint $\lambda$
+can be re-expressed as a 2-configuration probability problem 
+for a corresponding $S_{\sstate}$-determined configuration constraint $\lambda'$.
+
+Let $\cal T$ be the set of triples of the form $(S_1, S_2, S_3)$,
+where $S_1$, $S_2$, and $S_3$ are pairwise disjoint node sets such that
+$S_1 \cup S_2 \cup S_3 = S_{\sstate}$.
+For each triple $(S_1, S_2, S_3)$ in $\cal T{}$,
+let $\calc{}'(S_1, S_2, S_3)$ be the configuration on the nodes in $S_{\sstate}$,
+such that every node in $S_1$ is in state ${\rstate}$,
+every node in $S_2$ is in state ${\istate}$,
+and every node in $S_3$ is in state ${\sstate}$.
+Then, $\psi(S_1, S_2, S_3)$ is the probability that 
+the projection onto $S_{\sstate}$ of the configuration of system $\cals{}$ at time 2 
+equals $\calc{}'(S_1, S_2, S_3)$.
+From, Theorem \ref{thm:generalized_vulnerability_time_2},
+$\psi(S_1, S_2, S_3)$ can be computed in polynomial time.
+
+Let $\cal T'$ be the set of members $(S_1, S_2, S_3)$ of $\cal T$,
+such that $\lambda'$ is satisfied by $\calc{}'(S_1, S_2, S_3)$.
+Since the cardinality of $S_{\sstate}$ is $O(\log{n})$,
+the cardinality of $\cal T'$ is polynomial in $n$.
+Thus, the 2-configuration probability problem for $\lambda$
+can be solved in polynomial time by computing the following sum:
+\[
+\sum_{(S_1, S_2, S_3) \in {\cal T'} } \psi(S_1, S_2, S_3).
+\]
+\QED
+
+We note that when the cardinality of node set $S$ is greater than $O(\log{n})$,
+but still limited, corresponding versions  of 
+Theorem~\ref{thm:generalized_vulnerability_time_2}, 
+Corollary~\ref{cor:4probs_time_2}, 
+and Corollary~\ref{cor:S_determined_time_2} hold,
+but with a running time that is exponential in the cardinality of $S$.
+For instance, if $|S|$ is $O(n^{1/2})$,
+the running time of the corresponding algorithms is
+$O(2^{n^{1/2}})$.
+
+Finally, from the linearity of expectation \cite{MU-2005}, 
+we note that the expected number of new infections at any time $t$ equals
+the sum of the vulnerabilities of all the nodes  at time $t$.
+Thus, we have the following consequence of Corollary~\ref{cor:gen_easy_time_1}(c)
+and  Corollary~\ref{cor:4probs_time_2}(c) .
+
+\begin{corollary}\label{cor:expected_number_infected_time_2}
+For any SIR system,
+the expected number of new infections at times $t = 1$ and 
+$t = 2$ can be computed in polynomial time. \QED
+\end{corollary}
+
+%\newcommand{\calspi}{\mbox{$\mathcal{S}'_i$}}
+%\newcommand{\calsppi}{\mbox{$\mathcal{S}''_i$}}
+
+
+\subsection{Efficient Approximations for some Forecasting Problems} 
+\label{sse:fpras_expected_inf}
+
+\subsubsection{Assumptions and Notation}
+
+We now develop approximation algorithms for the \tTotVuls{} and \tTotInfs{} problems.
+As in the previous sections, we assume that the underlying 
+graph is $G=(V, E)$. 
+%As explained in the proof of Proposition~\ref{pro:vulnerability_time_2},
+%without loss of generality, we can assume that
+%the initial configuration contains only one node in state \istate;
+%we denote this node as $s$.
+For convenience, the transmission probability on
+edge $\{u, v\}\in E$ is denoted by $p(u,v)$. 
+In some cases, we assume
+a uniform probability $p(u,v) = p$ for all edges.  
+
+
+%Let $X(t)$ denote
+%the (random) number of nodes infected at time $t$; 
+%the values of $X(t)$ for different values of $t$ represent the 
+%\textbf{epicurve}.  
+%Let $Y(t)=\sum_{t'\leq t} X(t)$ denote the cumulative
+%number of infections up to time $t$; the values of $Y(t)$ for
+%different values of $t$ represent the 
+%\textbf{cumulative epicurve}, and computing $Y(t)$ is the \tTotInf{} problem.
+%Let $X_v(t)$ denote the indicator for node
+%$v$ getting infected within time $t$; that is, $X_v(t) = 1$ if
+%$v$ gets infected within time $t$ and $X_v(t) = 0$ otherwise.
+%We refer to $p_{tvul}(v, t)=\Pr[X_v(t)=1]$ as the 
+%\textbf{timed vulnerability} of node $v$ at time $t$. Computing
+%$p_{tvul}(v, t)$ is the \tVul{} problem.
+
+
+\subsubsection{Efficient Approximations for \tTotVuls{} and \tTotInfs{}}
+\label{sec:vul}
+
+In this section, we develop efficient 
+approximations for certain forecasting problems by reducing them
+to the problem of computing the probability of satisfying a DNF formula (\dnfsat)
+defined in Section~\ref{sss:boolean_sat}.
+Theorem~\ref{thm:num_dnf_prob_approx} 
+stated in that section (and proven in \cite{karp:jc85}) shows that
+for any $\epsilon, \delta\in(0,1)$, there is an efficient algorithm
+that produces an $(\epsilon, \delta)$-approximation for \dnfsat.
+We rely on that theorem to obtain our approximation results.
+
+%% given the probability that each variable is true.
+%% The running time of the DNF approximation algorithm is the following.
+%%
+%%\begin{proposition}\label{pro:DNF_sampling_running_time}
+%%For a given DNF formula containing $n$ variables and $m$ clauses,
+%%the running time of the DNF sampling approximation algorithm is 
+%%$O(\frac{1}{\epsilon^2}\,n\, m \log{(1/\delta)})$. 
+%%\end{proposition}
+ 
+Let $G(V,E)$ be the underlying graph of the given SIR system $\cals{}$.
+
+\begin{definition}\label{def:edge_assignment}
+For any edge $e$ in $E$, we let $x(e)$ denote a corresponding Boolean variable,
+where $x(e) =1$ indicates that edge $e$ is transmitting,
+and $x(e) =0$ indicates that $e$  is not transmitting.
+We call $x(e)$ an {\bf edge variable}.
+We let $X(E)$ denote the set of Boolean variables for all $e \in E$.
+We define an {\bf edge assignment} to be
+an assignment of a Boolean value to each variable in $X(E)$.
+\end{definition}
+
+We let ${\cal A}_E$ denote the set of all edge assignments.
+% to a given edge set $E'$.
+For an edge assignment $\alpha \in {\cal A}_E$, 
+and Boolean value $b$, we let $\alpha^b$ denote the set of edges $e$ in $E$
+such that $\alpha(x(e)) = b$.
+We let $p(\alpha)$ denote the probability of the assignment, i.e.,
+$p(\alpha) = \displaystyle{ \prod_{e \in \alpha^1} p_e 
+ \prod_{e \in \alpha^0} (1 - p_e)   }.$      
+ For a set of edge assignments $\Gamma \subseteq {\cal A}_E$,
+ we let $p(\Gamma)$ denote the total probability 
+ of all the edge assignments in $\Gamma$, 
+ i.e., 
+ $p(\Gamma) = \displaystyle{ \sum_{\alpha \in \Gamma} p(\alpha) 
+                                            }.$     
+
+Given an initial configuration $\cali{}$ of a SIR system $\cals{}$,
+we use the phrase ``index node" to denote any
+node which is in state \istate{} in the configuration $\cali{}$.  
+We define a path in underlying graph $G(V,E)$ 
+to be an {\bf infectious path} if the path is simple,
+the initial node of the path is an index node
+and all other nodes along the path 
+are in state \sstate{} in configuration $\cali{}$.
+Given a node $v$,
+let $\mathcal{P}_t(v)$ denote the set of all infectious paths in $G(V, E)$
+such that each path in $\mathcal{P}_t(v)$ satisfies the following
+two properties: (i) its length\footnote{The length 
+of a path is the number of edges in that path.} is
+$t$ and (ii) its final node is $v$;
+further, let $\mathcal{P}'_t(v)$ denote the set of 
+all infectious paths in $G(V, E)$
+whose length is at most $t$ and whose final node is $v$.
+Let $\mathcal{P}_t^{max}$ denote 
+the maximum value of $|\mathcal{P}'_t(v)|$ over all nodes $v$.
+Also, given a subgraph $G'$ of $G$, a path in $G'$ is termed an infectious path
+if the path is an infectious path in $G$.
+
+Given an initial configuration $\cali{}$,
+an edge assignment $\alpha \in {\cal A}_E$, 
+and a non-negative integer $t$,
+we let $\calc{}_t(\alpha)$ denote the configuration specified as follows.
+Consider each node $v \in V$.
+\begin{description}
+\item{(a)}
+If $v$ is in state \rstate{} in initial configuration $\cali{}$,
+then $v$ is in state \rstate{} in $\calc{}_t(\alpha)$.
+\item{(b)}
+Suppose $v$ is in state \istate{} in $\cali{}$.
+If $t=0$,
+$v$ is in state \istate{} in $\calc{}_t(\alpha)$;
+and if $t >0$,
+$v$ is in state \rstate{} in $\calc{}_t(\alpha)$.
+\item{(c)}
+Suppose $v$ is in state \sstate{} in $\cali{}$.
+If graph $G(V, \alpha^1)$ contains an infectious path to $v$ of length less than $t$,
+then $v$ is in state \rstate{} in $\calc{}_t(\alpha)$;
+if $G(V, \alpha^1)$ contains an infectious path to $v$ of length $t$,
+but there is no such shorter path, 
+then $v$ is in state \istate{} in $\calc{}_t(\alpha)$;
+and if $G(V, \alpha^1)$ contains no infectious path to $v$ of length at most $t$,
+then $v$ is in state \sstate{} in $\calc{}_t(\alpha)$.
+\end{description}
+We observe the following.
+
+\begin{proposition}\label{pro:edge_assn_phase_space}
+For a given edge assignment $\alpha \in {\cal A}_E$, the sequence of configurations
+$\langle \calc{}_0(\alpha), \calc{}_1(\alpha), \cdots,$ \\
+$\calc{}_t(\alpha)\rangle$
+is a phase space path for SIR system $\cals{}$. 
+\end{proposition}
+
+\noindent
+\textbf{Proof:}~
+Consider two consecutive configurations in the above sequence, say
+ $\calc{}_i(\alpha)$ and  $\calc{}_{i+1}(\alpha)$.
+Consider a given node $v \in V$.
+
+Suppose $v$ is in state \rstate{} in $\calc{}_i(\alpha)$.
+Then either $v$ is in state \rstate{} in initial configuration $\cali{}$,
+or $G(V, \alpha^1)$ contains an infectious path to $v$ of length less than $i$.
+In either case,
+$v$ is in state \rstate{} in $\calc{}_{i+1}(\alpha)$.
+
+Suppose $v$ is in state \istate{} in $\calc{}_i(\alpha)$.
+Then $G(V, \alpha^1)$ contains an infectious path to $v$ of length $i$,
+so $v$ is in state \rstate{} in $\calc{}_{i+1}(\alpha)$.
+
+Suppose $v$ is in state \sstate{} in $\calc{}_i(\alpha)$.
+Then, $v$ is in state \sstate{} in $\cali{}$,
+and $G(V, \alpha^1)$ contains no infectious path to $v$ of length at most $i$.
+First, suppose there is a node $u$ such that 
+$u$ is in state \istate{} in $\calc{}_i(\alpha)$
+and $G(V, \alpha^1)$ contains the edge $(u,v)$.
+Then $G(V, \alpha^1)$ contains an infectious path to $u$ of length $i$,
+so $G(V, \alpha^1)$ contains an infectious path to $v$ of length $i+1$.
+Thus, $v$ is in state \istate{} in $\calc{}_{i+1}(\alpha)$.
+Now suppose there is no such node $u$.
+Then $G(V, \alpha^1)$ contains no infectious path to $v$ of length at most $i+1$,
+So, $v$ is in state \sstate{} in $\calc{}_{i+1}(\alpha)$.
+
+Since the above holds for every node $v \in V$,
+configuration $\calc{}_{i+1}(\alpha)$ is a valid successor configuration of $\calc{}_i(\alpha)$.
+\QED
+
+We now observe the following.
+
+  \begin{proposition}\label{pro:infectious_path}
+  In the phase space path corresponding to 
+  an edge assignment $\alpha \in {\cal A}_E$, 
+  a given node $v$ is infected by time $t$ iff
+  either $v$ is in state \rstate{} in initial configuration $\cali{}$
+  or graph $G(V, \alpha^1)$ contains an infectious path to $v$ 
+of length at most $t$. \hfill$\Box$
+ \end{proposition}
+
+For a given configuration constraint $\lambda$ and non-negative integer $t$,
+ we define $f_{\lambda,t}$ to be the Boolean function of the set of edge variables $X(E)$
+ specified as follows.
+ For a given edge assignment $\alpha \in {\cal A}_E$, 
+ $f_{\lambda,t}(\alpha) = \lambda(\calc{}_t(\alpha))$.
+ Thus, $f_{\lambda,t}$ is true for $\alpha$ iff $\lambda$ is satisfied by
+ configuration $\calc{}_t(\alpha)$ in the phase space path corresponding to $\alpha$.
+ We let $P(f_{\lambda,t})$ denote the probability that 
+$f_{\lambda,t}$ is true,
+ i.e., $P(f_{\lambda,t})$ is the sum of $p(\alpha)$ 
+ over all $\alpha \in {\cal A}_E$  such that $f_{\lambda,t}(\alpha)$ is true.
+ Then we observe the following.
+ 
+ \begin{proposition}\label{pro:config_problem_edge_assn}
+  For a given configuration constraint $\lambda$ and non-negative integer $t$,
+ the solution to the $t$-configuration problem for $\lambda$ is equal to the value of
+ $P(f_{\lambda,t})$. \hfill$\Box$
+ \end{proposition}
+ 
+Suppose that for a given configuration constraint $\lambda$ and given time $t$,
+there is an efficient method to construct a relatively concise DNF formula 
+for the Boolean function $f_{\lambda,t}$.
+Then we can use DNF sampling to approximate the value of $P(f_{\lambda,t})$.
+From Proposition~\ref{pro:config_problem_edge_assn},
+this approximation is also an approximation to the solution 
+to the $t$-configuration problem for $\lambda$.
+
+We first illustrate this approach by considering the \tTotVuls{} problem.
+Let node set $S=\{v_1,\ldots, v_k\}$.
+
+Given initial configuration $\cali{}$, 
+for the  \tTotVuls{} problem
+we can assume without loss of generality that the problem 
+instance  has been modified 
+by the removal from graph $G$ of all nodes
+that are in state \rstate{} in $\cali{}$,
+and that no member of $S$ is an index node.
+
+Define a DNF formula $\phi_{\textsc{TotVul}}(S,t)$ as follows:
+\begin{enumerate}
+\item
+The set of Boolean variables is the set of edge variables $X(E)$.
+%Create a Boolean variable $x(e)$ for each $e\in E$, with $\Pr[x(e)=1]=p(e)$. \\
+(Thus, there are $|E|$ variables.)
+\item
+For each tuple of infectious paths $(P_1,\ldots,P_k)$, 
+where for each $j$, $1 \leq j \leq k$,
+there is  a $t' \leq t$,
+such that $P_j \in \mathcal{P}_{t'}(v)$,
+%with $P_j\in \displaystyle{\cup_{t'\leq t}\mathcal{P}(s, v_j, t')}$, for
+%$j=1,\ldots,k$, \\ 
+we construct the clause $C(P_1,\ldots,P_k)=\bigwedge_{e\in E'} x(e)$, where
+$E'$ is the set of edges occurring in any of the paths $P_1,\ldots,P_k$.
+\item
+The formula $\phi_{\textsc{TotVul}}(S,t)$ is the disjunction of all such clauses $C(P_1,\ldots,P_k)$.
+\end{enumerate}
+
+Since an edge assignment $\alpha \in {\cal A}_E$ satisfies formula $\phi_{\textsc{TotVul}}(S,t)$ 
+iff in the graph induced by $\alpha^1$, for every $v$ node in set $S$,
+there is an infectious path to $v$ of length at most $t$, we have the following.
+
+ \begin{proposition}\label{pro:formula_TotVul_correct}
+ Formula $\phi_{\textsc{TotVul}}(S,t)$ represents the Boolean function 
+ $f_{\lambda_{\textsc{TotVul},S},t}$.
+ \end{proposition}
+ \noindent
+\textbf{Proof:}~
+From Proposition \ref{pro:infectious_path},
+for a given edge assignment $\alpha \in {\cal A}_E$, 
+$f_{\lambda_{\textsc{TotVul},S},t}(\alpha)$ is true iff for every node $v$ in $S$,
+$G(V, \alpha^1)$ contains an infectious path to $v$ of length at most $t$.
+Thus, $f_{\lambda_{\textsc{TotVul},S},t}(\alpha)$ is true iff 
+$\alpha$ satisfies at least one clause of DNF formula
+$\phi_{\textsc{TotVul}}(S,t)$. 
+\QED
+
+\begin{corollary}\label{cor:formula_satprob_TotVul}
+ The solution to the \tTotVuls{} problem is equal to
+ the probability that formula $\phi_{\textsc{TotVul}}(S,t)$ is satisfied.
+\end{corollary}
+ 
+ To obtain an upper bound on the number of clauses in formula $\phi_{\textsc{TotVul}}(S,t)$,
+ we consider the number of infectious paths of a given length.
+ 
+ Let $\theta$ denote the number of index nodes. 
+ Let $\Delta$ denote the maximum node degree of graph $G$.
+ 
+ \begin{lemma}\label{lem:path_count_t}
+ For any $t \geq 2$ and any node $v$, $|\mathcal{P}_t(v)| = O(\theta \Delta (\Delta-1)^{t-2})$.
+ Also  $\mathcal{P}_t^{max}$ = \\ $O(\theta \Delta (\Delta-1)^{t-1})$.
+ \end{lemma}
+ \noindent
+\textbf{Proof:}~
+A path in $\mathcal{P}_t(v)$ can begin at any of the $\theta$ index nodes.
+There is a choice of out most $\Delta$ edges from this initial index node.
+For the next $t-2$ nodes along the path,
+there is a choice of at most $\Delta-1$ edges to continue the path.
+The last edge must go to $v$.
+Thus, $v$, $|\mathcal{P}_t(v)| = O(\theta \Delta (\Delta-1)^{t-2})$.
+
+Since $|\mathcal{P}_{t'}(v)| = O(\theta \Delta (\Delta-1)^{t'-2})$,
+it follows that $\sum_{t' = 0}^t   |\mathcal{P}_{t'}(v)|$ is 
+$O( \theta \Delta (\Delta-1)^{t-1} )$.
+\QED
+
+\begin{theorem}
+\label{thm:totvul_approx}
+For any $\epsilon, \delta\in(0,1)$, 
+an $(\epsilon, \delta)$-approximation to the \tTotVuls{} problem
+can be obtained in time 
+$O(\frac{1}{\epsilon^2}\,|E|\,\theta^{|S|} \,\Delta^{|S|} \,(\Delta-1)^{(t-1)|S|}\log{(1/\delta)})$. 
+\end{theorem}
+\noindent
+\textbf{Proof:}~
+The approximation algorithm constructs formula $\phi_{\textsc{TotVul}}(S,t)$,
+and then uses DNF sampling to obtain an estimate of $P(\phi_{\textsc{TotVul}}(S,t))$.
+The number of variables in $\phi_{\textsc{TotVul}}(S,t)$ is $|E|$.
+The number of clauses in $\phi_{\textsc{TotVul}}(S,t)$
+is  $O( ( \mathcal{P}_t^{max} )^{|S|} )$.
+From Lemma \ref{lem:path_count_t}, 
+$\mathcal{P}_t^{max} = O(\theta \Delta (\Delta-1)^{t-1})$.
+Therefore, the number of clauses in $\phi_{\textsc{TotVul}}(S,t)$
+is  $O( \theta^{|S|} \,\Delta^{|S|} \,(\Delta-1)^{(t-1)|S|} )$.
+The result follows from Theorem \ref{thm:num_dnf_prob_approx}. 
+ \QED
+
+Note that if in addition to having fixed values for $\epsilon$ and $\delta$, 
+if $|S|$ and $t$ are also fixed,
+the approximation algorithm runs in polynomial time.
+
+We now consider the \tTotInfs{} problem.
+Suppose that for a given problem instance, 
+$q$ is the required number of nodes from set $S$ to be infected by time $t$. 
+Given initial configuration $\cali{}$, 
+for the  \tTotInfs{} problem
+we can assume without loss of generality that the the problem instance  has been modified 
+by the removal from graph $G$ of all nodes
+that are in state \rstate{} in $\cali{}$,
+and that no member of $S$ is an index node.
+
+Define a DNF formula $\phi_{\textsc{TotInf}}(S,t)$ as follows:
+\begin{enumerate}
+\item
+The set of Boolean variables is the set of edge variables $X(E)$.
+%Create a Boolean variable $x(e)$ for each $e\in E$, with $\Pr[x(e)=1]=p(e)$. \\
+(Thus, there are $|E|$ variables.)
+\item
+For each tuple of infectious paths $(P_1,\ldots,P_q)$ leading to $q$ distinct nodes 
+$v_{i_1},  \ldots, v_{i_q}$
+in set $S$, 
+such for each $j$, $1 \leq j \leq q$,
+there is  a $t' \leq t$,
+such that $P_j \in \mathcal{P}_{t'}(v_{i_j})$,
+%with $P_j\in \displaystyle{\cup_{t'\leq t}\mathcal{P}(s, v_j, t')}$, for
+%$j=1,\ldots,k$, \\ 
+we construct the clause $C(P_1,\ldots,P_q)=\bigwedge_{e\in E'} x(e)$, where
+$E'$ is the set of edges occurring in any of the paths $P_1,\ldots,P_q$.
+\item
+The formula $\phi_{\textsc{TotInf}}(S,t)$ is the disjunction of all such clauses $C(P_1,\ldots,P_q)$.
+\end{enumerate}
+
+ \begin{proposition}\label{pro:formula_TotInf_correct}
+ Formula $\phi_{\textsc{TotInf}}(S,t)$ represents the Boolean function 
+ $f_{\lambda_{\textsc{TotInf},S},t}$.
+ \end{proposition}
+ \textbf{Proof:}~
+From Proposition \ref{pro:infectious_path},
+for a given edge assignment $\alpha \in {\cal A}_E$, 
+$f_{\lambda_{\textsc{TotInf},S},t}(\alpha)$ is true iff 
+there is a set of at most $q$ distinct nodes in $S$ such that for each of these nodes,
+$G(V, \alpha^1)$ contains an infectious path to $v$ of length at most $t$.
+Thus, $f_{\lambda_{\textsc{TotInf},S},t}(\alpha)$ is true iff 
+$\alpha$ satisfies at least one clause of DNF formula
+$\phi_{\textsc{TotInf}}(S,t)$. 
+\QED
+
+\begin{corollary}\label{cor:formula_satprob_TotInf}
+ The solution to the \tTotInfs{} problem is equal to
+ the probability that formula $\phi_{\textsc{TotInf}}(S,t)$ is satisfied.
+\end{corollary}
+ 
+ 
+\iffalse
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% This theorem has been stated above.
+\begin{theorem}
+\label{thm:totvul_approx}
+For any $\epsilon, \delta\in(0,1)$, 
+an $(\epsilon, \delta)$-approximation to the \tTotVuls{} problem
+can be obtained in time 
+$O(\frac{1}{\epsilon^2}\,|E|\,\theta^q \,\Delta^q \,(\Delta-1)^{(t-1)q} \, \log{(1/\delta)})$. 
+\end{theorem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fi
+ 
+ 
+\begin{theorem}
+\label{thm:totinf_approx}
+For any $\epsilon, \delta \in (0,1)$, 
+an $(\epsilon, \delta)$-approximation to the \tTotInfs{} problem
+can be obtained in time 
+$O(\frac{1}{\epsilon^2}\,|E|\, |S|^q \, \theta^q \,\Delta^q \,(\Delta-1)^{(t-1)q} \, \log{(1/\delta)})$. 
+\end{theorem}
+\noindent
+\textbf{Proof:}~
+The approximation algorithm constructs formula $\phi_{\textsc{TotInf}}(S,t)$,
+and then uses DNF sampling to obtain an estimate of $P(\phi_{\textsc{TotInf}}(S,t))$.
+The number of variables in $\phi_{\textsc{TotVul}}(S,t)$ is $|E|$.
+Now consider the number of clauses in $\phi_{\textsc{TotVul}}(S,t)$.
+Let $C(a,b)$ denote the number of combinations of $b$ objects chosen from a set of $a$ objects.
+Note that $C(a,b)$ is $O(a^b)$.
+For each choice of $q$ distinct nodes $v_{i_1},  \ldots, v_{i_q}$ in set $S$, 
+the number of clauses in $\phi_{\textsc{TotVul}}(S,t)$ 
+is  $O( ( \mathcal{P}_t^{max} )^q )$.
+Therefore, the total number of clauses in $\phi_{\textsc{TotVul}}(S,t)$ 
+is  $O( C(|S|,q) ( \mathcal{P}_t^{max} )^q )$,
+which is $O(  |S|^q ( \mathcal{P}_t^{max} )^q )$.
+From Lemma \ref{lem:path_count_t}, 
+$\mathcal{P}_t^{max} = O(\theta \Delta (\Delta-1)^{t-1})$.
+Therefore, the number of clauses in $\phi_{\textsc{TotInf}}(S,t)$
+is  $O(  |S|^q \, \theta^q \,\Delta^q \,(\Delta-1)^{(t-1)q} )$.
+The result follows from Theorem \ref{thm:num_dnf_prob_approx}. 
+ \QED
+
+Note that if in addition to having fixed values for $\epsilon$ and $\delta$, 
+if $q$ and $t$ are also fixed,
+the approximation algorithm runs in polynomial time.
+
+
+
+
+
+%We first describe an algorithm for \tTotVuls{} for node set $S=\{v_1,\ldots, v_k\}$, which
+%involves the following steps. 
+
+%Let $P(S)$ denote the probability that 
+%$\phi(S)$ has a satisfying assignment; that is,~ $P(S)$ ~=~ \\
+%$\sum_{x \in \mathcal{X}} \Pr[x]$,~
+%where $\mathcal{X} \subseteq \{0,1\}^E$ denotes the set of
+%satisfying assignments to $\phi(S)$. \\
+%Use the DNF sampling algorithm of \cite{karp:jc85} to estimate
+%$P(S)$ within a factor of $(1\pm\epsilon)$ with \\
+%probability at least $1-\frac{\delta}{n}$.~
+%Let $\hat{P}(S)$ be the resulting estimate.
+
+%We will show (Theorem~\ref{theorem:tvuldnf}) that the estimate
+%$\hat{P}(S)$ provides a good approximation to the actual
+%probability value $P(S)$.
+
+%Recall from Section~\ref{sec:graphdefs} that
+%$\Delta$ denotes the maximum node degree and 
+%$\mathcal{P}(s, v, t)$ denotes the set of all paths of length $t$ 
+%between $s$ and $v$ in $G$.
+
+%The analysis of the above algorithm uses the following equivalence between
+%fixed points in the SIR system and random subgraphs; a restricted form of
+%this was used in the proof of Proposition \ref{pro:vulnerability_time_2}.
+%Consider a sequence of configurations 
+%$\bar{\mathcal{C}}=\langle\mathcal{C}_0,\ldots,\mathcal{C}_T\rangle$ 
+%in an SIR system with index node $s$.
+%(Note that  $\mathcal{C}_T$ is not necessarily a fixed point.)
+%Let $V(\bar{\mathcal{C}}) = \langle V_0, \ldots, V_T \rangle$, where $V_t$
+%denotes the set of nodes that get infected
+%at each time $t$ in $\bar{\mathcal{C}}$, and let $E(\bar{\mathcal{C}})$ denote
+%the set of edges on which the disease spreads. We say a subset $E'\subseteq E$ is
+%``consistent'' with $\bar{\mathcal{C}}$ if
+%all of the following three conditions hold:
+%(1) the set of nodes at distance $t$
+%from the index node $s$ in the graph $G[E']$ is precisely 
+%the set $V_t$, for $t=0,\ldots,T$, 
+%(2) $E(\bar{\mathcal{C}})\subseteq E'$, and
+%(3) $E''=E(\bar{\mathcal{C}})$, where $E''=\{(u,v): u\in V_i, v\in V_j, \mbox{ with }i, j\leq T, i\neq j\}$
+%is the subset of $E'$ with both endpoints in $\cup_{t\leq T} V_t$, but not within the same set $V_t$
+%for any $t$.
+%Let $\mathcal{E}(\bar{\mathcal{C}})$ denote
+%the collection of all subsets consistent with $E(\bar{\mathcal{C}})$.
+
+%\begin{lemma}
+%\label{lemma:percolation}
+%Consider a sequence of configurations 
+%$\bar{\mathcal{C}}=\langle \mathcal{C}_0,\ldots,\mathcal{C}_T \rangle$ 
+%in an SIR system.
+%Let $V(\bar{\mathcal{C}})$, $E(\bar{\mathcal{C}})$ and $\mathcal{E}(\mathcal{C})$
+%be as defined above. Then,
+%$\Pr[\bar{\mathcal{C}}] = \sum_{E'\in \mathcal{E}(\bar{\mathcal{C}})} \Pr[E']$.
+%end{lemma}
+%\noindent
+%\textbf{Proof:}~
+%The proof is by identifying the structure of the subsets $E'$ consistent 
+%with $\bar{\mathcal{C}}$. For $i, j\in\{0,\ldots,T\}$, let 
+%$E_{ij}=\{(u,v): u\in V_i, v\in V_j\}$ be the set of edges with one
+%end point in the set $V_i$ and the other in $V_j$. 
+%For $i<T$, let $E^+_{i}=\{(u,v): u\in V_i, v\not\in \cup_{j\leq i} V_j\}$.
+%Let $E_{ij}(\bar{\mathcal{C}})= E_{ij}\cap E(\bar{\mathcal{C}})$ be the
+%subset of edges in $E_{ij}$ on which the infection spread in the
+%sequence $\bar{\mathcal{C}}$.
+%From the definition of the SIR system (Section \ref{sec:sir_dyn_system}), we have
+%\[
+%\Pr[\bar{\mathcal{C}}] = \prod_{t<T}
+%\prod_{e\in E_{t,t+1}(\bar{\mathcal{C}})} p(e) 
+%\prod_{e\in E^+_{i} - E(\bar{\mathcal{C}}), i< T} (1-p(e))
+%\]
+
+%By definition of $E'$, for each $v\in V_t$, $t< T$, we have
+%$\{e=(u,v)\in E': u\in V_t, v\in V_{t+1}\} = E_{t,t+1}(\bar{\mathcal{C}})$.
+%For any $e\in E_{t,t}$, whether or not $e\in E'$ does not affect its
+%onsistency with $E(\bar{\mathcal{C}})$. 
+%Further, for $e=(u,v)\in E^+_i$, $i<T$, it must be the case that
+%$e\not\in E'$; else, node $v$ would be at distance $i+1$ from the source
+%in $G[E']$, making $E'$ inconsistent with $\bar{\mathcal{C}}$.
+%Let $E_1 = \{e=(u,v): u\in V_T, v\not\in \cup_{t\leq T} V_t\}$ and
+%$E_2=\{e=(u,v): u, v\not\in \cup_{t\leq T} V_t\}$. For edges
+%$e\in E_1\cup E_2$, 
+%whether or not $e\in E'$ does not affect its consistency with
+%$E(\bar{\mathcal{C}})$. Therefore, for any $E'\in \mathcal{E}(\bar{\mathcal{C}})$, we have
+%\[
+%\Pr[E'] = \Pr[\bar{\mathcal{C}}]\prod_{t, e\in E_{tt}\cap E'} p(e)
+%\prod_{t, e\in E_{tt} - E'} (1-p(e))
+%\prod_{e\in (E_1\cup E_2)\cap E'} p(e)
+%\prod_{e\in (E_1\cup E_2)- E'} (1-p(e))
+%\]
+
+%From the above discussion, it follows that when the
+%above expression is summed up over all $E'\in \mathcal{E}(\bar{\mathcal{C}})$, 
+%we get
+%\[
+%\Pr[\bar{\mathcal{C}}]\prod_{t, e\in E_{tt}}(p(e) + (1-p(e))) \prod_{e\in E_1\cup E_2}(p(e) + (1-p(e))),
+%\]
+%which is precisely $\Pr[\bar{\mathcal{C}}]$, and the lemma follows.
+%\QED
+
+%\begin{theorem}
+%\label{theorem:tvuldnf}
+%For any $\epsilon, \delta\in(0,1)$, the estimate $\hat{\alpha}(S)$ 
+%from the above algorithm gives an
+%$(\epsilon, \delta)$-approximation to the \tTotVuls{} problem for set $S$
+%in time $O(\frac{1}{\epsilon^2}\,m\,\Delta^{2t|S|}\log{(1/\delta)})$. 
+%\end{theorem}
+%\noindent
+%\textbf{Proof:}~
+%Let $\phi(S)$ denote the DNF formula constructed in the above algorithm. Let
+%$\mathcal{X}\subseteq \{0,1\}^E$ denote the set of satisfying assignments for $\phi(S)$.
+%For each $x\in\mathcal{X}$, we have $\Pr[x] = \Pi_{e: x(e)=1} p(e)$ is the
+%probability of the assignment $x$; the total probability that $\phi(S)$ is satisfiable
+%equals $\sum_{x\in\mathcal{X}} \Pr[x]$. Next, observe that
+%the solution to the \tTotVuls{} problem
+%involves computing $\sum_{\bar{\mathcal{C}}}\Pr[\bar{\mathcal{C}}]$, where 
+%the summation is over all sequences of configurations
+%$\bar{\mathcal{C}}$ in the phase space, which cause all the nodes in $S$ to get infected by time $t$.
+%Let $\mathcal{E}=\cup_{\bar{\mathcal{C}}} \mathcal{E}(\bar{\mathcal{C}})$,
+%where the union is over all sequences of configurations
+%$\bar{\mathcal{C}}$ that are relevant to the \tTotVuls{} problem.
+%It is also easy to verify that for distinct $\bar{\mathcal{C}}$ and $\bar{\mathcal{C}'}$,
+%the corresponding sets of edges, $\mathcal{E}(\bar{\mathcal{C}})$ and
+%$\mathcal{E}(\bar{\mathcal{C}'})$, respectively, are disjoint. Therefore,
+%from Lemma \ref{lemma:percolation}, it follows that the solution to the
+%\tTotVuls{} problem equals 
+%$\sum_{E'\in \mathcal{E}} \Pr[E']$.
+%We will prove below that 
+%$\sum_{x\in\mathcal{X}} \Pr[x] = \sum_{E'\in \mathcal{E}}\Pr[E']$. 
+%Together, these imply that the reduction to DNF sampling correctly gives an approximation
+%to the \tTotVuls{} problem. 
+%Finally, in the reduction to DNF, the formula $\phi(S)$ has $m$ variables
+%and $O(\Delta^{t|S|})$ clauses, since $|\mathcal{P}(s, v, t)|=O(\Delta^t)$
+%for each $v\in S$.  Therefore, from the algorithm of \cite{karp:jc85}
+%(as discussed in Section \ref{sse:other_def}), the running time is
+%$O(\frac{1}{\epsilon^2}\,m\,\Delta^{2t|S|}\log{(1/\delta)})$, and the theorem follows.
+
+%We now prove that 
+%$\sum_{x\in\mathcal{X}} \Pr[x] = \sum_{E'\in \mathcal{E}}\Pr[E']$. We show this
+%by proving that there exists a one-to-one correspondence between
+%$x\in\mathcal{X}$ and a set $E'(x)=\{e: x(e)=1\}\in \mathcal{E}$.
+%By construction,
+%a clause $C(P_1,\ldots, P_k)$ is satisfied if and only if $x(e)=1$ for all edges
+%$e\in E(P_1)\cup\ldots E(P_k)$. 
+%Therefore, for each $x\in\mathcal{X}$, there must be a tuple of paths $P_1,\ldots, P_k$
+%with $P_j\in\mathcal{P}(s, v_j, t')$ such that $t'\leq t$, and 
+%$x(e)=1$ for all $e\in E(P_1)\cup\ldots E(P_k)$. Since each of these paths
+%has length at most $t$, it follows that $E'(x)=\{e: x(e)=1\}$ is contained in the set
+%$\mathcal{E}$ defined above.  Next, consider
+%any $E'\in \mathcal{E}$. By definition, the component containing source node $s$ in the graph
+%$G[E']$ contains all the nodes $v_j\in S$ at distance at most $t$ from $s$. This
+%implies that there must exist paths $P_j\subset E'$ from $s$ to $v_j$,
+%for each $v_j\in S$. Therefore, the assignment $x$ defined by $x(e)=1$ for all
+%$e\in E'$ satisfies some clause $C(P_1,\ldots, P_k)$. 
+%Further, $\Pr[x] = \Pr[E']$ for the corresponding $x, E'$. Therefore,
+%it follows that 
+%$\sum_{x\in\mathcal{X}} \Pr[x] = \sum_{E'\in \mathcal{E}'}\Pr[E']$.
+%\QED
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\textcolor{red}{This section is not correct, since it uses a solution to the
+%\tVul{} problem.}
+%\subsubsection{Efficient approximation of the expected number of new infections
+%at a given time, and higher moments}
+%\label{sec:tnewinf}
+%
+%
+%The \tNewInf{} problem involves computing the probability that 
+%the number of nodes in $S$ which get infected at time $t$ is at least $q$.
+%Here, we discuss how to compute the expectation of
+%number of nodes in $S$ which get infected at time $t$, and its higher moments.
+%Obtaining good approximations to \tNewInf{} is a challenging problem.
+%
+%\begin{corollary}
+%\label{cor:ttotinf}
+%For any $\epsilon, \delta\in(0,1)$, an $(\epsilon, \delta)$-approximation
+%of the $k$-th moment of the number of nodes in $G$ which get infected at time $t$
+%can be estimated in
+%$O(\frac{8}{\epsilon^2}mn^{k}\Delta^{2tk}k\log{n/\delta})$ time. 
+%\end{corollary}
+%\textbf{Proof:}~
+%For simplicity, we first discuss the proof for $k=1$.
+%Let $X(v)$ denote the event that $v$ gets infected at time $t$. Then,
+%$E[X(v)] = \Pr[X(v)=1]$ equals the \tVul{} solution for set $S=\{v\}$, and
+%the expected number of nodes in $G$ which get infected at time $t$ equals
+%$\sum_{v\in V} E[X(v)]$. For each node $v$, we use Theorem \ref{theorem:tvuldnf}
+%to compute an $(\epsilon, \delta/n)$-approximation $\hat{\alpha}(v)$ to $E[X(v)]$ such that
+%\[
+%\Pr[\hat{\alpha}(v) \not\in [(1-\epsilon) E[X(v)], (1+\epsilon) E[X(v)]]]\leq\frac{\delta}{n}
+%\]
+%in time $O(\frac{8}{\epsilon^2}m\Delta^{2t}\log{n/\delta})$. From a
+%union bound, we have
+%\[
+%\Pr[\sum_{v\in S} \hat{\alpha}(v) \not\in [(1-\epsilon) \sum_{v\in S} E[X(v)], (1+\epsilon) \sum_{v\in S} E[X(v)]] \leq \delta,
+%\]
+%which implies $\sum_{v\in S} \hat{\alpha}(v)$ is an $(\epsilon, \delta)$-approximation
+%to $\sum_{v\in S} E[X(v)]$, within the required time bound.
+%
+%Next, we consider the computation of $E[(\sum_{v\in S} X(v))^k]$. By linearity, we have
+%\[
+%E[(\sum_{v\in S} X(v))^k] = \sum_{S'\subseteq S} E[\Pi_{v\in S'} X(v)], 
+%\]
+%since the $X(v)$'s are binary variables. Observe that $E[\prod_{v\in S'} X(v)]$ is the
+%solution to the \tVul{} problem for set $S'$, and Theorem \ref{theorem:tvuldnf} gives an
+%$(\epsilon, \delta/n^k)$-approximation to it,
+%denoted by $\hat{\alpha}(S')$, in 
+%$O(\frac{8}{\epsilon^2}m^{k+1}\Delta^{2kt}k\log{n/\delta})$ time.  This
+%implies 
+%\[
+%\Pr[\hat{\alpha}(S')\not\in [(1-\epsilon)E[\prod_{v\in S'} X(v)], (1+\epsilon)E[\prod_{v\in S'} X(v)]] \leq \delta/n^k.
+%\]
+%It follows from a union bound that $\sum_{S'\subseteq S} \hat{\alpha}(S')$
+%is an $(\epsilon, \delta)$-approximation to $E[(\sum_{v\in S} X(v))^k]$.
+%\QED
+%
+
+\subsubsection{Exact computation of variance of the number of new infections
+at $t=2$ with uniform transmission probability}
+\label{sec:exact-t2}
+
+%%%% We decided to delete the section on computing higher order moments
+%%In contrast to Section \ref{sec:tnewinf}, which gives approximations to the
+%%moments of the number of new infections in $S$ at a given time $t$, we observe that
+
+Here, we show that for $t=2$, the variance of the number of
+new infections can be computed exactly,
+when the transmission probability is uniform, i.e., $p(e)=p$
+for all edges $e\in E$.
+
+\begin{proposition}
+The variance of the number of new infections in set $S$ at $t=2$ can be computed in
+polynomial time under uniform transmission probability.
+\end{proposition}
+
+\noindent
+\textbf{Proof:}~
+Let $V_1$ be the nodes at distance $1$ from source $s$. Let $V_2$ be the
+set of nodes in $S$ at distance 2 from $s$.
+Let $X(v)$ denote the event that $v$ gets infected at time $t=2$.
+From Corollary~\ref{cor:4probs_time_2}, it follows that the \TwoVuls{}
+problem where $S = \{v\}$ can be solved exactly, which implies that $E[X(v)]$ can
+be computed exactly. This implies, for all nodes $u, v$, $E[X(u)]E[X(v)]$
+can be computed exactly. Therefore, computing the variance of $\sum_{v\in S} X(v)$
+reduces to computing $E[X(i)X(j)]$ for all pair of nodes $i, j\in V_2$.
+
+
+\begin{figure}
+\rule{\textwidth}{0.01in}
+%%\centering
+%%\includegraphics[scale=1.0]{var.pdf}
+\begin{center}
+\input{anil_figure_3.pdf_t}
+\end{center}
+\caption{}
+\label{fig:vart2}
+\rule{\textwidth}{0.01in}
+\end{figure}
+
+We focus on a specific pair of nodes $i, j\in V_2$.
+As shown in Figure \ref{fig:vart2},
+we partition $V_1= A\cup B \cup C$, where: (1) $A$ is the set of nodes $u\in V_1$
+such that $(u,i)\in E$, but $(u,j)\not\in E$; (2) $B$ is the set of nodes $u\in V_1$
+such that $(u,i), (u,j)\in E$; and (3) $C$ is the set of nodes $u\in V_1$
+such that $(u,i)\not\in E$, but $(u,j)\in E$. Let $|A|=n_A$, $|B|=n_B$ and $|C|=n_C$.
+
+We consider the random subgraph $E(p)$ in which each edge is picked with probability $p$.
+We define the following random variables:
+\begin{itemize}
+\item
+$Z_1=1$ if there exists a path $s, u, i$ in $E(p)$, for some node $u\in A$ $E(p)$.
+We have $\Pr[Z_1]=1 - (1-p^2)^{n_A}$.
+\item
+$Z_2=$ if there exists a path $s, u, i$ in $E(p)$, for some node $u\in B$.
+We have $\Pr[Z_2] = 1 - (1-p^2)^{n_B}$.
+\item
+$Z_3=$ if there exists a path $s, u, j$ in $E(p)$, for some node
+$u\in B$. 
+We have $\Pr[Z_3] = 1 - (1-p^2)^{n_B}$.
+\item
+$Z_4=1$ if there exists a path $s, u, j$ in $E(p)$ for some $u\in C$.
+We have $\Pr[Z_4]=1 - (1-p^2)^{n_C}$.
+\end{itemize}
+
+Next, we have $\Pr[X_i=X_j=1]=\Pr[Z_1Z_4] + \Pr[Z_1Z_3\bar{Z_4}] + \Pr[\bar{Z_1}Z_2Z_4] + 
+\Pr[\bar{Z_1}Z_2Z_3\bar{Z_4}]$, since these induce a mutually disjoint set of events.
+Any two events $Z_i, Z_j$, such that $\{i, j\}\neq \{2, 3\}$ are independent.
+Therefore, the first three terms of the above sum can be computed easily. Since
+$Z_2$ and $Z_3$ are not independent, we describe how to estimate the last term below.
+
+We partition $B$ into sets $B_1, B_2, B_3, B_4$, where $B_i$ is the set
+of nodes which are adjacent (or not adjacent) to $i$ and $j$, as shown in Fig \ref{fig2}.
+For a given such partition,
+let $Y_i$ denote the event that the configuration for the $B_i$ nodes occurs.
+Let $n^i_B=|B_i|$.
+
+
+Finally, we consider $\Pr[Z_2=Z_3=1]$. This happens if either event $Y_1$ occurs, or
+we have $\bar{Y_1}\bigwedge Y_2\bigwedge Y_3$. The latter event happens
+if $n^1_B=0$, $n^2_B, n^3_B>0$.
+Therefore, 
+\[\Pr[Z_2\,Z_3] = \sum_{n^1_B, n^2_B, n^3_B, n^4_B} \frac{n_B!}{n^1_B! (n_B-n^1_B)!} p^{3n^1_B} +
+                \frac{n_B!}{n^2_B! n^3_B!(n_B-n^2_B-n^3_B)!} 
+                 (p^2(1-p))^{n^2_B}(p^2(1-p))^{n^3_B},
+\]
+where the summation is over all $n^1_B, n^2_B, n^3_B, n^4_B$ that sum to $n_B$.
+Clearly, there are at most $n^4$ such combinations. Finally, $Z_2Z_3$ is independent
+of $\bar{Z_1}$ and $\bar{Z_4}$. Therefore,
+putting these together, we can determine $\Pr[\bar{Z_1}Z_2Z_3\bar{Z_4}]$, and
+in turn, $\Pr[X_iX_j]$.
+\QED
+
+\begin{figure}
+\rule{\textwidth}{0.01in}
+%%\centering
+%%\includegraphics[scale=1.0]{var.pdf}
+\begin{center}
+\input{anil_figure_4.pdf_t}
+\end{center}
+\caption{}
+\label{fig2}
+\rule{\textwidth}{0.01in}
+\end{figure}
+
+\subsubsection{Efficient approximation of the expected total number of infections
+in set $S$ up to time $t$}
+
+Recall from Section \ref{sse:prob_formulation} that the \tTotInfs{} problem
+involves computing the probability that the number of nodes
+in $S$ which are infected by time $t$ is at least $q$. While approximating
+\tTotInfs{} ~for an arbitrary set $S$ remains open, we observe that the expected 
+total number of infections in $S$
+by time $t$ can be approximated by 
+simple Monte-Carlo sampling, provided the initial infection occurs in $S$;
+this is because when the initially infected node is in $S$,
+the total number of infections up to time $t$ in $S$ has bounded variance.  Let
+$\epsilon, \delta\in (0,1)$ be parameters.  The basic idea 
+is to run $N$ Monte-Carlo
+samples of the SIR process on $G$, and compute an estimate in the
+following manner:
+
+\begin{enumerate}
+\item
+For~ $j=1$ ~to ~$\lceil \log{(2/\delta)} \rceil$:
+\begin{enumerate}
+\item
+For $i=1$ to $N=\left\lceil 8n^2/\epsilon^2\right\rceil$: 
+use the SIR process to 
+find a random fixed point (as discussed in Section \ref{sec:sir_dyn_system}).
+Let $Y_{ij}$ denote the cumulative number of infections
+in this fixed point.
+\item
+Let $Y_j =\sum_{i=1}^N Y_{ij}/N$
+\end{enumerate}
+\item
+Return the median $\hat{Y}$ of $\{Y_j: j=1,\ldots,\lceil\log{(2/\delta)}\rceil\}$.
+\end{enumerate}
+
+
+\begin{lemma}
+\label{lemma:mcmc-numinf}
+Let $\epsilon, \delta\in (0,1)$ be parameters.
+For $N\geq \frac{8}{\epsilon^2}n^2\log{(2/\delta)}$, $\hat{Y}$ is
+an $(\epsilon, \delta)$-approximation to the
+expected total number of infections in $S$ up to time $t$, provided the source of
+infection is in $S$.
+\end{lemma}
+\noindent
+\textbf{Proof:}~
+Let $Y$ denote the number of infections in $S$ up to time $t$ for a given SIR instance.
+Since the source node is in $S$, and always gets infected, we have $Y\geq 1$, so
+that $E[Y]\geq 1$, and $var(Y)\leq E[Y^2]\leq n^2$.
+From Chebyshev's Inequality, it follows that 
+$\Pr[|Y_j - E[Y] | \geq \epsilon E[Y]]\leq 
+\frac{\sum_i var(Y_{ij})}{(8n^2/\epsilon^2)\epsilon^2E[Y]^2} \leq 1/8$.
+
+Next, the probability that the median $\hat{Y}$ is less than
+$(1-\epsilon)E[Y]$ is at most ${t \choose t/2} 8^{-t/2}\leq
+2^{-t}\leq \delta/2$, for $t=\log{(2/\delta)}$.  Similarly, the
+probability that $\hat{Y}$ is larger then $(1+\epsilon)E[Y]$
+is at most $\delta/2$, and the lemma follows. \QED
+
+The above lemma implies that the Monte-Carlo sampling method 
+with $\frac{8}{\epsilon^2}n^2\log{(2/\delta)}$ samples gives a
+$(1\pm\epsilon)$-approximation to the \tTotInfs{} problem for set $S$, with
+probability at least $1-\delta$, provided the source (the index node) is in $S$.
+This can be used for the forecasting problem for specific subpopulations, such
+as children (which can be modeled by the choice of $S$). If the source is not
+in $S$, the above method does not work, since $E[Y]$ could be very small.
+As discussed in Section \ref{sse:related_work}, the approach of
+Dagum et al. \cite{dagum:focs95} can be used as an estimator, and is
+guaranteed to run in $O(\frac{8}{\epsilon^2}n^2\log{(2/\delta)})$ steps.

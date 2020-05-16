@@ -1,0 +1,858 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%%% Short-Term Forecasting in SIR Systems - Section 5:  
+%%% Last edited by Ravi (Nov. 6, 2016).  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+  
+\section{Complexity Results for More Realistic Social Networks}
+\label{sec:realistic}
+
+
+In this section, we shall show how the results of the 
+previous section can be extended to SIR systems whose
+underlying graphs are closer to actual social networks. 
+For brevity, we present these extensions for the 
+\tNewInfv{} and \tTotInfv{} problems. 
+%%As in Section \ref{sec:general_results},
+%%we will consider these problems for set $S=V$, which will not be specified below.
+%%\textbf{(Must verify that these extensions also hold for
+%%other problems.)}
+
+
+\subsection{Making All Edge Probabilities Below 1}
+
+%% \textsf{We may not need this subsection since the next
+%% subsection shows how all the probability values can be 
+%% made 1/2.}
+
+\begin{theorem}\label{thm:gen_hardness_prob_not_one}
+The following forecasting problems are \cnump-hard,
+even when all the transmission probabilities are less than one:
+(1) \TwoNewInfv{} ~and~
+(2)  \TwoTotInfv{}.
+\end{theorem}
+
+\noindent
+\textbf{Proof:}~  
+
+\noindent
+\textbf{Proof of (1):}
+%For the proof for the \TwoNewInfv{} problem. 
+We use the same construction as in the proof for the \TwoNewInfv{} problem 
+in Part~(1) of Theorem \ref{thm:gen_hardness}, 
+except that each edge incident on a node in $V_2$ is 
+assigned a transmission probability $p_c$ such that 
+$( 1 - 1/2^n)^{1/m} < p_c <1$.  
+As before, any infection pattern (i.e., a subset of $V_1$)
+corresponding to a non-satisfying
+assignment results in zero probability of event \cale{}.  
+Now consider an infection pattern, say $\alpha$,
+corresponding to a satisfying assignment.
+This infection pattern  gives each
+node in $V_2$ at least one neighbor that is infected at time $t =
+1$.  Therefore, the conditional probability, given infection pattern
+$\alpha$, that any given node in $V_2$ is infected at time $t = 2$
+is at least $p_c$ and less than 1.  
+The conditional probability,
+given infection pattern $\alpha$, that all $m$ nodes in $V_2$ are
+infected at time $t = 2$ is at least $p_c^m$ and less than 1.
+
+Let $N$ be the number of satisfying assignments, and $P_m$ be the
+total probability that there are at least $m$ nodes infected at
+time $t = 2$.  
+Since each infection pattern corresponding to a
+satisfying assignment has probability $1/2^n$ of occurring, we
+obtain $$p_c^m N/2^n \leq P_m < N/2^n.$$
+Since  $p_c > ( 1 - 1/2^n)^{1/m}$, we have that 
+$$( 1 - 1/2^n) N/2^n < P_m < N/2^n.$$
+Since there is at least one clause, the assignment where all variables
+have value {\tt false} is non-satisfying, so $N < 2^n$. Therefore,
+$$( 1 - 1/2^n) N = N - N/2^n > N-1.$$
+This yields 
+$$(N-1)/2^n < P_m < N/2^n.$$
+Consequently, 
+$\displaystyle{N = \left\lceil 2^n P_m \right\rceil}$.
+Thus, if the probability value $P_m$ can be computed efficiently,
+then $N$, the number of satisfying assignments to the 
+\mtsat{} instance can also be computed efficiently.
+This completes the proof of Part~(1) of the theorem.
+
+\medskip
+\noindent
+\textbf{Proof of (2):}
+%We start with the proof for the \TwoTotInfv{} problem.
+We use the same construction as in the proof of
+Part~(2) of  Theorem \ref{thm:gen_hardness},
+except that each edge incident on a node in $V_2$ is assigned a
+transmission probability $p_c$ such that 
+$( 1 - 1/2^n)^{1/{mn}} < p_c <1$.  
+As before, any infection pattern corresponding to a
+non-satisfying assignment results in zero probability of event \cale{}.  
+Now consider an infection pattern corresponding to a
+satisfying assignment, say infection pattern $\alpha$.  
+The conditional probability, given infection pattern $\alpha$, 
+that all $mn$ nodes in $V_2$ are infected at time 
+$t = 2$ is at least $p_c^{mn}$ and less than 1.
+
+Let $N$ be the number of satisfying assignments, and $P_q$ be the
+total probability that there are at least $q$ nodes infected at
+time $t = 2$.  
+Since each infection pattern corresponding to a
+satisfying assignment has probability $1/2^n$ of occurring, we obtain
+$$p_c^{mn} N/2^n \leq P_q < N/2^n.$$
+Since  $p_c > ( 1 - 1/2^n)^{1/{mn}}$, we have  
+an equation similar to that in Part~(1):
+$$( 1 - 1/2^n) N/2^n < P_q < N/2^n.$$
+Thus, 
+$N = \displaystyle{\left\lceil 2^n P_q \right\rceil}$,
+and this completes the proof of Part (2) of the theorem.
+\QED
+
+
+\subsection{Making All Edge Probabilities Equal to Half}
+
+\begin{theorem}\label{thm:gen_hardness_prob_half}
+For any $t \geq 3$, the following forecasting problems are \cnump-hard,
+even when the transmission probabilities are all equal to $1/2$:
+(1)  \tNewInfv{} ~and~ 
+(2)  \tTotInfv{}.
+\end{theorem}
+
+\noindent
+\textbf{Proof:}~  
+
+\noindent
+\textbf{Proof of (1):}
+We start with the proof for the \TwoNewInfv{} problem.
+Recall that $n$ and $m$ denote respectively the number of variables and
+clauses in the given instance of~ \mtsat.
+Let
+\begin{equation}\label{eqn:k_new_defn}
+k = - \left\lfloor \frac{\ln (1- (1-1/2^n)^{1/m} )}{\ln(4/3)} 
+        \right\rfloor + 1.
+\end{equation}
+The following claim establishes a bound on the value of $k$.
+
+\medskip
+\noindent
+\textbf{Claim 5:} The value of
+$k$ defined by Equation~(\ref{eqn:k_new_defn})
+is bounded by a linear function of $n$.
+
+\medskip
+\noindent
+\textbf{Proof of Claim 5:}~
+Note that for a given $n$, the value of $k$ increases with $m$.
+Also note that since each clause contains two variables and
+no clause is repeated, $m < n^2$.
+
+Consider the quantity $\epsilon = 1/(n^2 2^n)$.
+We want to show that $(1 - \epsilon)^{n^2} > (1-1/2^n)$.
+From the Binomial Theorem \cite{Rosen-2011},
+$$(1 - \epsilon)^{n^2} = \sum_{i=0}^{n^2} {n^2 \choose i}{(- \epsilon)}^i,$$
+where 
+$${n^2 \choose i} = \frac{n^2!}{i! \, (n^2-i)!}.$$
+Note that 
+$${n^2 \choose i+1} ~=~ 
+{n^2 \choose i} \frac{n^2-i}{i+1} ~\leq~ {n^2 \choose i} n^2$$.
+Thus,
+$${n^2 \choose i+1} {\epsilon}^{i+1} < {n^2 \choose i} {\epsilon}^i,$$
+so the magnitude of the terms in the above summation is 
+monotonically decreasing.
+Consequently, the value of the summation is greater than 
+the sum of the first two terms in the summation.
+Thus, $(1 - \epsilon)^{n^2} > (1 - n^2 \epsilon)$, 
+so  $(1 - \epsilon)^{n^2} > 1-1/2^n$.
+
+As a consequence, $(1 - \epsilon) > (1-1/2^n)^{1/{n^2}}$.
+More generally, for any $m < n^2$,
+$(1 - \epsilon)$ $>$ \mbox{$(1-1/2^n)^{1/m}$}.
+Thus, $(1- (1-1/2^n)^{1/m} ) > \epsilon$.
+Consequently, $\ln (1- (1-1/2^n)^{1/m} ) > \ln (\epsilon)$,
+so \mbox{$- \ln (1- (1-1/2^n)^{1/m})$} $<$ $-\ln (\epsilon)$.
+But $\ln (\epsilon)$ = $-n \ln (2) + 2  \ln (n)$.
+Thus, 
+$$k <  \left\lceil \frac{n \ln (2) + 2  \ln (n)}{\ln(4/3)} \right\rceil+ 1,$$
+establishing Claim~5. \hfill $\Box$
+
+\medskip
+We now continue the proof for the \ThrNewInfv{} problem.
+We modify the proof for the \TwoNewInfv{} problem from Part (1) of 
+Theorem~\ref{thm:gen_hardness_prob_not_one}.  
+The graph $G(V,E)$ is
+modified by replacing each edge in $E_2$ with a set of
+$k$ edge-disjoint paths, as follows.  
+We add a new set of $2km$ nodes $Y$.  
+We envision these $2km$ nodes as being organized 
+into $2m$ groups, with each group containing $k$ nodes.  
+Each of these groups can be envisioned
+as being associated with one of the $2m$ edges in $E_2$.  
+Consider an edge $\{v_a, w_j\}$ in $E_2$.  
+We denote the associated group
+of nodes in $Y$ as $\{ y_{a, j,d}$, $1 \leq d \leq k \}$.
+
+Each of the $2m$ edges in $E_2$ is replaced by $2k$ new edges.
+Consider an edge $\{v_a, w_j\}$ in $E_2$.
+This edge is deleted, and replaced by the following $2k$ new edges:
+$\{v_a,  y_{a, j,d}\}$ and $\{y_{a, j,d},  w_j\}$, 
+where $1 \leq d \leq k$.
+Each of these new edges is assigned the transmission probability $1/2$.
+
+We now consider the probability that event \cale{} occurs at time $t = 3$.
+Any infection pattern corresponding to a non-satisfying assignment
+results in zero probability of event \cale{}.
+Now consider an infection pattern corresponding to a satisfying assignment, 
+say infection pattern $\alpha$.
+Consider a clause $C_j$.
+Since the assignment satisfies all clauses,
+there is at least one node $v_a$ in $V_1$,
+such that $v_a$ corresponds to a variable occurring in clause $C_j$,
+and for this infection pattern,
+node $v_a$ is in state $\istate$ at time $t = 1$.
+Each of the $k$ disjoint paths 
+$( \{v_a,  y_{a, j,d}\}, \{y_{a, j,d},  w_j\} )$
+has probability $1/4$ of causing node $w_j$ to be 
+in state $\istate$ at time $t = 3$.
+Therefore, the conditional probability, given infection pattern $\alpha$,
+that any given node in $V_2$ is infected at time $t = 3$ 
+is at least $1 - (3/4)^k$ and less than 1.
+The conditional probability, given infection pattern $\alpha$,
+that all $m$ nodes in $V_2$ are infected at time $t = 3$ 
+is at least $(1 - (3/4)^k)^m$ and less than 1.
+
+\medskip
+Note that 
+$$k > - \frac{\ln (1- (1-1/2^n)^{1/m} )}{\ln(4/3)}.$$ 
+So 
+$$k \, \ln(4/3) > -  \ln (1- (1-1/2^n)^{1/m} ).$$
+Thus, $$(4/3)^k > \frac{1}{1- (1-1/2^n)^{1/m}}.$$
+Equivalently,
+$$(3/4)^k < 1- (1-1/2^n)^{1/m}.$$
+Thus, $(1-1/2^n)^{1/m} < 1 - (3/4)^k$, yielding
+$$(1-1/2^n) < (1 - (3/4)^k)^m.$$
+
+Let $N$ be the number of satisfying assignments, and $P_m$ be the
+total probability that there are at least $m$ nodes infected at
+time $t = 3$.  Since each infection pattern corresponding to a
+satisfying assignment has probability $1/2^n$ of occurring, we
+obtain $$(1 - (3/4)^k)^m N/2^n \leq P_m < N/2^n.$$
+
+Since  $(1 - (3/4)^k)^m > ( 1 - 1/2^n)$, we have have that
+$$( 1 - 1/2^n) N/2^n < P_m < N/2^n.$$
+Thus, 
+$N = \displaystyle{\lceil 2^n P_m \rceil}$,
+and this completes the proof of the \cnump-hardness of \ThrNewInfv{}.
+
+The \cnump-hardness of \tNewInfv{} for any $t \geq 4$ can be 
+proven through a simple modification to the above construction,
+similar to the modification used in the proof of Part~(1)
+of Theorem~\ref{thm:gen_hardness}.
+The graph $G(V,E)$ constructed in the proof for \ThrNewInfv{} ~is
+augmented as follows.
+Given an integer $t \geq 4$, we construct a simple path 
+$\langle s_0, s_1, \ldots, s_{t-4}\rangle$
+consisting of $t-3$ new nodes, and add an edge from $s_{t-4}$ to $s$.
+The transmission probability for all the new edges is set to $1/2$.
+At time 0, node $s_0$ is in state \istate{} and all 
+other nodes are in state \sstate. 
+The new nodes and edges added to $G$ ensure that 
+node $s$ gets infected at time $t-3$ with probability $(1/2)^{t-3}$.
+The requirement is to compute the probability that at least $m$
+nodes in $V_2$ get infected at time $t$.  
+Since each satisfying assignment has at least one variable equal to 
+\texttt{True},
+each infection pattern 
+corresponding to a satisfying assignment has probability 
+$(1/2)^{n+t-3}$ of occurring.
+Thus, $N = \displaystyle{\lceil 2^{n+t-3} P_m \rceil}$, and
+this completes the proof of Part~(1) of the theorem.
+
+
+
+\medskip
+\noindent
+\textbf{Proof of (2):}
+We start with the proof for the \TwoTotInfv{} problem.
+Recall that $n$ and $m$ denote respectively the number of variables and
+clauses in the given instance of~ \mtsat.
+Let
+\begin{equation}\label{eqn:k_tot_defn}
+k = - \left\lfloor \frac{\ln (1- (1-1/2^n)^{1/{m n^2}} )}{\ln(4/3)} 
+        \right\rfloor + 1.
+\end{equation}
+The following claim establishes a bound on the value of $k$.
+
+\medskip
+\noindent
+\textbf{Claim 6:} The value of
+$k$ defined by Equation~(\ref{eqn:k_tot_defn})
+is bounded by a linear function of $n$.
+
+\medskip
+\noindent
+\textbf{Proof of Claim 6:}~
+Note that for a given $n$, the value of $k$ increases with $m$.
+Also note that since each clause contains two variables and no
+variable is repeated, $m < n^2$.
+
+Consider the quantity $\epsilon = 1/(n^4 2^n)$.
+We want to show that $(1 - \epsilon)^{n^4} > (1-1/2^n)$.
+From the Binomial Theorem \cite{Rosen-2011},
+$$(1 - \epsilon)^{n^4} = \sum_{i=0}^{n^4} {n^4 \choose i}{(- \epsilon)}^i,$$
+where 
+$${n^4 \choose i} = \frac{n^4!}{i! \, (n^4-i)!}.$$
+Note that 
+$${n^4 \choose i+1} ~=~ 
+{n^4 \choose i} \frac{n^4-i}{i+1} ~\leq~ {n^4 \choose i} n^4.$$
+Thus,
+$${n^4 \choose i+1} {\epsilon}^{i+1} < {n^4 \choose i} {\epsilon}^i$$.
+So the magnitude of the terms in the above summation is 
+monotonically decreasing.
+Consequently, the value of the summation is greater than 
+the sum of the first two terms in the summation.
+Thus, $(1 - \epsilon)^{n^4} > (1 - n^4 \epsilon)$,~ 
+so  $(1 - \epsilon)^{n^4} > 1-1/2^n$.
+
+As a consequence, $(1 - \epsilon) > (1-1/2^n)^{1/{n^4}}$.
+More generally, for any $m < n^2$,
+$(1 - \epsilon)$ $>$ \mbox{$(1-1/2^n)^{1/{m n^2}}$}.
+Thus, $(1- (1-1/2^n)^{1/{m n^2}} ) > \epsilon$.
+Consequently, $\ln (1- (1-1/2^n)^{1/{m n^2}} ) > \ln (\epsilon)$,
+so \mbox{$- \ln (1- (1-1/2^n)^{1/{m n^2}})$} $<$ $-\ln (\epsilon)$.
+But $\ln (\epsilon)$ = $-n \ln (2) - 4  \ln (n)$.
+Thus, 
+$$k <  \left\lceil \frac{n \ln (2) + 4  \ln (n)}{\ln(4/3)} \right\rceil+ 1,$$
+establishing Claim~6. \hfill $\Box$
+
+We modify the proof for the \TwoTotInfv{} problem from 
+Part~(2) of Theorem \ref{thm:gen_hardness_prob_not_one}. 
+The graph $G(V,E)$ is modified as follows. 
+As before, there is a node for each variable.
+However, for each of the $m$ clauses,  there are  now $n^3$ clause nodes.
+We denote the set of $m n^3$ clause nodes as $\{ w_i \mid 1 \leq i \leq m n^3 \}$.
+%We refer to the set of clause nodes associated with a given clause $c_j$
+%as $W_j = \{w_j^1, w_j^2, \ldots, w_j^{n^2}\}$. 
+There are no direct edges between variable nodes and clause nodes.
+For each of the $n$ variables, we add $k$ new nodes, 
+which we refer to as {\bf auxiliary nodes} for that variable.
+There is an edge from each of the $n$ variable nodes, 
+to each of the $k$ auxiliary nodes for that variable.
+There is also an edge from each auxiliary node for a given variable 
+to each clause node for a clause containing that variable.
+Each of edge is assigned the transmission probability $1/2$.
+The value of $q$ in specifying event \cale{} is 
+given by $q = mn^3$.
+
+We now consider the probability that event \cale{} occurs at time 3.
+
+Consider an infection pattern corresponding to a non-satisfying assignment.
+Since there is at least one clause that is unsatisfied,
+at most $(m-1) n^3$ clause nodes get infected by time 3.
+The number of nodes that are not clause nodes is $1 + n +kn$.
+Thus, the total number of nodes that are infected by time 3 is at most  $(m-1) n^3 + (k+1) n + 1$.
+As per Claim 6, let $\beta$ be a constant such that $k \leq \beta n$.
+Then the total number of nodes that are infected by time 3 is at most  $q - n^3 + \beta n^2 + n + 1$.
+Thus there is a constant $n_0$ such that if the number of Boolean variables $n$ is at least $n_0$,
+any infection pattern corresponding to a non-satisfying assignment 
+results in zero probability of event \cale{}.
+
+We will now utilize a general principle of probabilities 
+known as the FKG Inequality \cite{FKG_1971, srinivasan_1999}.
+For an event $\gamma$, let $Pr[\gamma]$ denote the probability of event $\gamma$,
+and for a set of events $\Gamma$, let $Pr[\Gamma]$ denote the 
+probability of $\Gamma$.
+Suppose we are considering events over a given set of 
+Boolean-valued independent random variables.
+For a given subset $A$ of these random variables,
+let $\bar{A}$ be the event that those variables in $A$ have value \texttt{True} 
+and those not in $A$ have value \texttt{False}. 
+An event $\gamma$ is said to be {\bf increasing} in these random variables 
+if for any subsets $A$ and $B$
+of these random variables such that $A \subset B$,
+if $\gamma$ holds when $\bar{A}$ holds, then $\gamma$ holds when $\bar{B}$ holds.
+The FKG Inequality says that for an event $\gamma$ and set of other events $\Gamma$
+that are all increasing over the same set of random variables,
+$Pr[\gamma \:|\: \Gamma] \geq Pr[\gamma]$.
+
+
+Now consider an infection pattern corresponding to a satisfying assignment, 
+say infection pattern $\alpha$.
+Let $\cale_i$ denote the event that node $w_i$ is infected at time 3. 
+%Let $\cale^i$ denote the event that the set of nodes $\{  w_1, \dots ,  w_i \}$
+%are all infected at time 3. 
+%Let $Pr[ \cale_i ]$ denote the probability of event $\cale_i$.
+%Let $Pr[ \cale^i ]$ denote the probability of event $\cale^i$.
+Consider a clause $C_j$.
+Since assignment $\alpha$ satisfies all clauses,
+there is at least one variable node $v_a$,
+such that $v_a$ corresponds to a variable occurring in clause $C_j$,
+and in infection pattern $\alpha$,
+node $v_a$ is in state $\istate$ at time $t = 1$.
+For any given clause node $w_i$ corresponding to clause $c_j$,
+there are $k$ disjoint length 2 paths between nodes $v_a$ and $w_i$.
+%$( \{v_a,  y_{a, j,d}\}, \{y_{a, j,d},  w_j\} )$
+Each of these $k$ paths
+has probability $1/4$ of causing node $w_i$ to be 
+in state $\istate$ at time $t = 3$.
+Therefore, the conditional probability of event $\cale_i$ 
+given infection pattern $\alpha$
+is at least $1 - (3/4)^k$ and less than 1.
+
+Let us call an edge incident on an auxiliary node an {\bf auxiliary edge}.
+The transmissibility of each auxiliary edge is an independent random variable, 
+with probability $1/2$.
+Note that each event $\cale_i$ is increasing in these random variables.
+Because these events are all increasing, the FKG Inequality
+applies to the probabilities of the $m n^2$ events of the form $\cale_i$.
+From the FKG Inequality, for $1 < i \leq m n^2$,
+$$Pr[ \cale_i \mid \alpha \, \bigwedge_{1\leq i' < i} \, \cale_{i'} ] 
+   ~\geq~ Pr[ \cale_i \mid \alpha].$$
+
+\noindent
+For each $\cale_i$, $1 \leq i \leq m n^2$, 
+$$Pr[ \cale_i \:|\:  \alpha] ~\geq~ 1 - (3/4)^k.$$
+Thus, using induction, it follows that
+$$Pr[ \bigwedge_{1 \leq i' \leq i} \, \cale_{i'} \;|\;  \alpha] 
+  ~\geq~ [1 - (3/4)^k]^i.$$
+
+\noindent
+Thus, the conditional probability, given infection pattern $\alpha$,
+that all $m n^2$ clause nodes are infected at time $t = 3$ 
+is at least $[1 - (3/4)^k]^{m n^2}$ and less than 1.
+
+\medskip
+Note that 
+$$k > - \frac{\ln (1- (1-1/2^n)^{1/{m n^2}} )}{\ln(4/3)}.$$ 
+Thus, 
+$$k \, \ln(4/3) > -  \ln (1- (1-1/2^n)^{1/{m n^2}} ).$$
+In other words, $$(4/3)^k > \frac{1}{1- (1-1/2^n)^{1/{m n^2}}}.$$
+Equivalently,
+$$(3/4)^k < 1- (1-1/2^n)^{1/{m n^2}}.$$
+Thus, $(1-1/2^n)^{1/{m n^2}} < 1 - (3/4)^k$, yielding
+$$(1-1/2^n) < [1 - (3/4)^k]^{m n^2}.$$
+
+Let $n$ be greater than $n_0$.
+Let $N$ be the number of satisfying assignments, and $P_q$ be the
+total probability that there are at least $q$ nodes infected by
+time $t = 3$.  Since each infection pattern corresponding to a
+satisfying assignment has probability $1/2^n$ of occurring, we
+obtain $$[1 - (3/4)^k]^{m n^2} N/2^n \leq P_q < N/2^n.$$
+
+Since  $[1 - (3/4)^k]^{m n^2} > ( 1 - 1/2^n)$, we have that
+$$( 1 - 1/2^n) N/2^n < P_q < N/2^n.$$
+Thus, $N = \displaystyle{\lceil 2^n P_q \rceil}$.
+In other words,
+if the probability of event \cale{} can be computed 
+efficiently, then for any \mtsat{} instance with at least $n_0$ variables,
+the number of satisfying assignments can also be computed efficiently. 
+This establishes the \cnump-hardness of \ThrTotInfv.
+The \cnump-hardness of \tTotInfv{} for any $t \geq 4$ can be 
+proven in a manner similar to that used \\ for \tNewInfv{}.
+\QED
+
+
+\subsection{Graphs with Small Diameter and Large Average Clustering
+Coefficient}
+\label{sse:dia_cc}
+
+Here, we show that \TwoNewInfv{} and \TwoTotInfv{} problems
+remain computationally intractable even when the underlying
+graph is a \textbf{clique}; that is, its  diameter 
+and average clustering coefficient are both 1.
+
+%%{\bf NEW VERSION OF THEOREM}
+
+\begin{theorem}\label{thm:dia_cc}
+The following forecasting problems are \cnump-hard,
+even for networks whose diameter and average clustering
+coefficient are both 1: 
+(1)  \TwoNewInfv{} ~and~ 
+(2)  \TwoTotInfv.
+\end{theorem}
+
+\noindent
+\textbf{Proof of Part (1):}~ We obtain this result by modifying
+the construction presented in the proof of Part~(1) 
+of Theorem~\ref{thm:gen_hardness}.
+We add additional edges to make the graph into a clique, 
+thereby ensuring that  the diameter and average clustering coefficient are both 1.
+Recall that $n$ and $m$ denote the number of variables and clauses
+in the given instance of \mtsat,
+node set $V_1$ consists of $n$ variable nodes,
+and node set $V_2$ consists of $m$ clause nodes.
+New edge set $E_3$ consists of $m$ edges, and connects node $s$ to each of the clause nodes.
+New edge set $E_4$ consists of $m(n-2)$ edges, 
+and connects each clause node to each of the $n-2$ variable nodes 
+that it is not connected to via edges in $E_2$.
+New edge set $E_5$ consists of $n(n-1)/2$ edges, and connects each pair of variable nodes.
+New edge set $E_6$ consists of $m(m-1)/2$ edges, and connects each pair of edge nodes.
+We let $r$  be the number of edges in $E_3 \cup E_4 \cup E_5$, viz. $r = n(n-1)/2 + m(n-1)$.
+
+The transmission probability of each edge in $E_3 \cup E_4 \cup E_5$ 
+is set to a value $\epsilon$ such that 
+\[
+\epsilon ~<~ \min\{1 - (1 - 1/{2^{n+1}})^{1/r},~ 1 - (1/2)^{1/m}\}.
+\]
+We refer to the edges in $E_3 \cup E_4 \cup E_5$ as {\bf weak edges}.
+
+The transmission probability of each edge in $E_6$ is set to the value 1.
+
+Consider an infection pattern, say $\alpha$,
+corresponding to a satisfying assignment.
+Consider the event ${\cal E}_{\alpha}$ that none of the 
+edges in $E_3$ are transmitting,
+and the edges in $E_1$ that are transmitting 
+have endpoints in $V_1$ corresponding to infection pattern $\alpha$.
+Note that the probability of event ${\cal E}_{\alpha}$ is $(1 -  \epsilon)^m/{2^n}$.
+Event ${\cal E}_{\alpha}$ ensures that each
+clause node is uninfected at time $t=1$,
+and has at least one neighbor that is infected at time $t =1$.  
+Therefore, event ${\cal E}_{\alpha}$ ensures
+that all $m$ clause nodes become newly infected at time $t = 2$.  
+
+Let $N$ be the number of satisfying assignments, 
+so that there are $N$ events of the form ${\cal E}_{\alpha}$,
+corresponding to the $N$ satisfying assignments.
+Note that these $N$ events are disjoint.
+Let ${\cal E}_{sat}$ denote the event that one of these $N$ events occurs.
+The probability that event ${\cal E}_{sat}$ occurs,
+which we denote as  $P[{\cal E}_{sat}]$, is $(1 -  \epsilon)^m N/2^n$.
+
+Now consider the event ${\cal E}_{weak}$ that at least one of the $r$ weak edges
+(i.e., the edges in $E_3 \cup E_4 \cup E_5$), is transmitting.
+Note that events ${\cal E}_{sat}$ and ${\cal E}_{weak}$ are not disjoint.
+The probability that event ${\cal E}_{weak}$ occurs,
+which we denote as  $P[{\cal E}_{weak}]$, is $1 -(1 -  \epsilon)^r$.
+There are instances when event ${\cal E}_{weak}$ occurs 
+and there are $m$ new infections at time 2;
+and there are instances when event ${\cal E}_{weak}$ occurs 
+but there are fewer than $m$ new infections at time 2.
+
+Suppose that neither event ${\cal E}_{sat}$ nor event ${\cal E}_{weak}$ occurs.
+Then the only possible new infections that can occur at time $t=1$ are in
+variable nodes, and the set of these variables that are infected correspond 
+to a non-satisfying infection pattern.
+Since no weak edges are transmitting, there less than $m$ 
+new infections at time $t=2$.
+
+Let $P_m$ be the
+total probability that there are at least $m$ new nodes infected at
+time $t = 2$, i.e., the probability of event ${\cal E}$.  
+Since event ${\cal E}$ occurs for sure if event ${\cal E}_{sat}$ occurs,
+and can only occur if at least one of events ${\cal E}_{sat}$ or event ${\cal E}_{weak}$ occurs,
+we have
+$$P[{\cal E}_{sat}]  ~<~ P_m  ~<~  P[{\cal E}_{sat}]  + P[{\cal E}_{weak}].$$
+Thus,
+$$(1 -  \epsilon)^m N/2^n ~<~ P_m  ~<~  (1 -  \epsilon)^m N/2^n  
+                                        + 1 - (1 -  \epsilon)^r.$$
+This yields
+$$ N  ~<~  2^n/(1 -  \epsilon)^m  P_m    ~<~   N  + 
+                              [1 - (1 -  \epsilon)^r] 2^n/(1 -  \epsilon)^m.$$
+
+Recall that 
+ $\epsilon < \min\{1 - (1 - 1/{2^{n+1}})^{1/r},~1 - (1/2)^{1/m}\}$.
+ The fact that $\epsilon < 1 - (1 - 1/{2^{n+1}})^{1/r}$ ensures that 
+ $(1 -  \epsilon) > (1 - 1/{2^{n+1}})^{1/r}$, so that
+ $(1 -  \epsilon)^r  > 1 - 1/{2^{n+1}}$,
+ and consequently $2^n (1 -  \epsilon)^r  > 2^n-1/2$.
+The fact that $\epsilon < 1 - (1/2)^{1/m}$ ensures that 
+ $(1 -  \epsilon) > (1/2)^{1/m}$, so that
+ $(1 -  \epsilon)^m  > 1/2$.
+We thus have 
+ $$2^n (1 -  \epsilon)^r + (1 -  \epsilon)^m  > 2^n.$$
+So,
+$$[ 1 - (1 -  \epsilon)^r] 2^n < (1 -  \epsilon)^m.$$
+ Consequently,
+ $$[1 - (1 -  \epsilon)^r] 2^n/(1 -  \epsilon)^m < 1.$$
+This yields
+$$ N ~<~ 2^n/(1 -  \epsilon)^m  P_m   ~<~  N  + 1.$$
+
+Consequently, $N = \lfloor 2^n/(1 -  \epsilon)^m  P_m \rfloor.$
+Thus, if the probability value $P_m$ can be computed efficiently,
+then $N$, the number of satisfying assignments to the 
+\mtsat{} instance, can also be computed efficiently.
+This completes the proof of Part~(1) of the theorem.
+
+
+\medskip
+\noindent
+\textbf{Proof of Part (2):}~ We obtain this result by a modification
+to the construction presented in the proof of Part~(1) 
+of  this Theorem.
+The necessary modifications are as follows.
+
+The value of $q$ is $n+m+1$.
+
+The node and edge sets are the same as in Part~(1),
+but some of the edge transmission probabilities are different.
+Each edge in $E_1$ has transmission probability $1/2$.
+Each edge in $E_2 \cup E_5 \cup E_6$ has transmission probability 1.
+
+We let $r$  be the number of edges in $E_3 \cup E_4$, viz., $r = m(n-1)$.
+
+The transmission probability of each edge in $E_3 \cup E_4$ 
+is set to a value $\epsilon$ such that $\epsilon < 1 - (1 - 1/{2^n})^{1/r}$.
+Note that such a value of $\epsilon$ ensures that $(1 - (1 -  \epsilon)^r) 2^n < 1$.
+We refer to the edges in $E_3 \cup E_4$ as {\bf weak edges}.
+
+Consider an infection pattern, say $\alpha$,
+corresponding to a satisfying assignment.
+Consider the event ${\cal E}_{\alpha}$ that the edges in $E_1$ that are transmitting 
+have endpoints in $V_1$ corresponding to infection pattern $\alpha$.
+Note that the probability of event ${\cal E}_{\alpha}$ is $1/{2^n}$.
+Since $\alpha$ is a satisfying assignment,
+at least one clause node is infected at time $t = 1$.
+Edge set $E_5$ then ensures that every variable node is infected by time $t=2$.
+Therefore, event ${\cal E}_{\alpha}$ ensures
+that all $q$ nodes are infected by time $t = 2$.  
+
+Let $N$ be the number of satisfying assignments, 
+so that there are $N$ events of the form ${\cal E}_{\alpha}$,
+corresponding to the $N$ satisfying assignments.
+Note that these $N$ events are disjoint.
+Let ${\cal E}_{sat}$ denote the event that one of these $N$ events occurs.
+The probability that event ${\cal E}_{sat}$ occurs,
+which we denote as  $P[{\cal E}_{sat}]$, is $N/2^n$.
+
+Now consider the event ${\cal E}_{weak}$ that at least one of the $r$ weak edges,
+i.e., the edges in $E_3 \cup E_4$, is transmitting.
+Note that events ${\cal E}_{sat}$ and ${\cal E}_{weak}$ are not disjoint.
+The probability that event ${\cal E}_{weak}$ occurs,
+which we denote as  $P[{\cal E}_{weak}]$, is $1 -(1 -  \epsilon)^r$.
+There are instances when event ${\cal E}_{weak}$ occurs 
+and there are $q$ total infections by time $t=2$;
+and there are instances when event ${\cal E}_{weak}$ occurs 
+but there are fewer than $q$ total infections by time $t=2$.
+
+Suppose that neither event ${\cal E}_{sat}$ nor event ${\cal E}_{weak}$ occurs.
+Then the only possible new infections that can occur at time $t=1$ are in
+variable nodes, and the set of these variables that are infected correspond 
+to an non-satisfying infection pattern.
+Since, no weak edges are transmitting, 
+there is at least one clause node that is uninfected by time $t=2$.
+Thus, there are fewer than $q$ total infections by time $t=2$.
+
+Let $P_q$ be the
+total probability that there are at least $q$ new nodes infected by
+time $t = 2$, i.e., the probability of event ${\cal E}$.  
+Since event ${\cal E}$ occurs for sure if event ${\cal E}_{sat}$ occurs,
+and can only occur if at least one of events ${\cal E}_{sat}$ 
+or event ${\cal E}_{weak}$ occurs, we have
+$$P[{\cal E}_{sat}]  ~<~ P_q  ~<~  P[{\cal E}_{sat}]  + P[{\cal E}_{weak}].$$
+Thus,
+$$N/2^n ~<~ P_q  ~<~  N/2^n  + 1 - (1 -  \epsilon)^r.$$
+This yields
+$$ N < 2^n  P_q   <  N  + [1 - (1 -  \epsilon)^r] 2^n.$$
+
+Since $\epsilon$ has been assigned a value so that 
+$[1 - (1 -  \epsilon)^r] 2^n < 1$, we have
+$$ N < 2^n  P_q   <  N  + 1.$$
+
+Consequently, $N = \lfloor 2^n  P_q \rfloor.$
+Thus, if the probability value $P_q$ can be computed efficiently,
+then $N$, the number of satisfying assignments to the 
+\mtsat{} instance, can also be computed efficiently.
+This completes the proof of Part~(2) of the theorem. \QED
+
+\subsection{Results for Power Law Graphs}
+\label{sse:power_law}
+
+Some authors have formalized power-law graphs as follows
+(see \cite{ferrante_etal_2008,shen_etal_2012}), 
+a formulation that we call a {\em strict} power-law graph.
+
+\begin{definition} \label{def:power-law-graph}
+A graph $G$ is called a {\bf strict} $\beta$  \textbf{power-law graph}
+if there exists an $\alpha$ such that the maximum node degree is $\Delta = \lfloor e^{\alpha/\beta} \rfloor$
+and the number $y_i$ of nodes of degree $i$ is given by 
+\[
+y_i = \left\{ \begin{array}{r@{\quad \quad}l}
+\lfloor e^{\alpha} / i^{\beta} \rfloor  & \mbox{if}~~  ~i > 1~ ~\mbox{or}~~ 
+      \sum_{i=1}^{\Delta}  \lfloor e^{\alpha} / i^{\beta} \rfloor~~  \mbox{is~ even}   \\
+\lfloor e^{\alpha} \rfloor  + 1 & \mbox{otherwise}.
+\end{array} \right.
+\]
+\end{definition}
+However, often a more relaxed requirement for a graph to be deemed
+a power-law graph is used, with more flexibility on the number of
+nodes of small degree.  
+For instance, Newman \cite{newman_2010} says the following:
+\begin{quotation}
+``A common situation is that power law is obeyed in the
+tail of the distribution, for large values of $k$, but not in the
+small-$k$ regime.  When one says that a network has a power law
+degree distribution, one normally means that only the tail of the
+distribution has this form."
+\end{quotation}
+In particular, Newman~\cite{newman_2010} uses the following definition for power
+law degree distribution. 
+Let $p_k$ denote the fraction of nodes with degree $k$.
+When $p_k$  follows a power law distribution with exponent $\alpha$, we have
+$$p_k ~=~ c k^{-\alpha}~~ ~\mbox{for}~~~  k ~\geq~ k_{min}$$
+for some constants $c$ and $k_{min}$.
+We formalize this definition as follows.
+
+\begin{definition} \label{def:degree-power-law-graph}
+For real $\beta > 0$ and integer $k \geq 1$, a graph $G$ is called
+a \textbf{degree}-$k$ $\beta$  \textbf{power-law graph} if there exists an
+$\alpha$ such that the maximum node degree is $\Delta = \lfloor
+e^{\alpha/\beta} \rfloor$ and for $i \geq k$, the number $y_i$ of nodes
+of degree $i$ is:
+\[
+y_i = \left\{ \begin{array}{r@{\quad \quad}l}
+\lfloor e^{\alpha} / i^{\beta} \rfloor  & \mbox{if}~~~  i > 1~  ~\mbox{or}~~
+\sum_{i=1}^{\Delta}  \lfloor e^{\alpha} / i^{\beta} \rfloor  ~~\mbox{is~ even}   \\
+\lfloor e^{\alpha} \rfloor  + 1 & \mbox{otherwise}.
+\end{array} \right.
+\]
+\end{definition}
+Note that there is no constraint on the number of nodes of degree
+$i$ ~if~ $i < k$.  Also note that a degree-1 $\beta$ power-law graph
+satisfies Definition \ref{def:power-law-graph}, and so is a strict
+$\beta$ power-law graph.
+We use the following result\footnote{We have stated
+Proposition~\ref{prop:power-law-embedding} as it appears
+in \cite{ferrante_etal_2008,shen_etal_2012}.
+The phrase ``maximal connected component" is used in the statement
+to refer to a ``connected component".}
+from \cite{ferrante_etal_2008,shen_etal_2012}.
+
+\begin{proposition}  \label{prop:power-law-embedding}
+There is a polynomial time algorithm that given a $\beta >0$ and a
+simple undirected graph $G$, constructs a simple undirected graph
+$G'$ such that $G$ is a set of maximal connected components of $G'$ and
+$G'$ is a strict $\beta$  power-law graph.
+\end{proposition}   
+
+Using Proposition \ref{prop:power-law-embedding}, for any fixed
+$\beta > 0$, all the results in Section 4 hold, even if the underlying
+graph of the given SIR system is required to be a  strict $\beta$
+power-law graph.  For instance, we have the following stronger
+version of Part~(1) of Theorem~\ref{thm:gen_hardness}.
+
+\newcommand{\calsp}{\mbox{$\mathcal{S}'$}}  
+
+\begin{theorem}\label{thm:hardness_power_law}
+For any $\beta > 0$ and any $t \geq 2$, the \tNewInfv{} problem is
+\cnump-hard, even when the underlying graph of the given SIR system
+is a  strict $\beta$  power-law graph.
+\end{theorem}
+
+\noindent
+\textbf{Proof:}~  
+Let $\cals{}$ be the SIR system constructed by the reduction used
+in the proof of Part~(1) of Theorem~\ref{thm:gen_hardness}.  
+Let $G$ be the underlying graph
+of $\cals{}$.  Let $G'$ be the graph constructed from $G$ by the
+algorithm from Proposition \ref{prop:power-law-embedding}.  Let
+$\calsp{}$ be a SIR system with underlying graph $G'$, the same
+transmission probabilities as $\cals{}$ on the edges that were also
+in $G$, and arbitrary nonzero transmission probabilities on the new
+edges.  We extend the initial configuration by having all the added
+nodes be in state \sstate.  It can be seen that the reduction is
+still valid.
+\QED
+
+Note that in general, the underlying graph constructed in the proof
+of Theorem~\ref{thm:hardness_power_law} contains multiple
+connected components. In general this is unavoidable, since a power
+law graph that is required to be a simple graph may have too many
+nodes of degree one to be connected.
+We now show that if the underlying graph of the given SIR system
+is permitted to be a degree-2 power law graph, the reduction can
+be done so that the constructed graph is connected.
+We do this through three kinds of graph transformations, which we refer
+to collectively as {\bf component-merger} transformations.  Each
+of these transformations leaves all node degrees unchanged, while
+reducing the number of connected components that contain more than
+two nodes.
+
+\medskip
+\noindent
+\textbf{Transformation~1~ (cycle-merger):}~
+Suppose that $F_1$ and $F_2$ are two distinct connected
+components of a simple graph such that $F_1$ and $F_2$ each contain
+a cycle.  Let $\{u, v\}$ be an edge in a cycle in $F_1$, and $\{x, y\}$
+be an edge in a cycle in $F_2$.  A {\bf cycle-merger} via edges
+$\{u, v\}$ and $\{x, y\}$ deletes these two edges, and replaces them
+with the two new edges $\{u, x\}$ and $\{v, y\}$.
+
+\medskip
+\noindent
+\textbf{Transformation~2~ (tree-merger):}~
+Suppose that $F_1$ and $F_2$ are two distinct connected
+components of a simple graph such that $F_1$ and $F_2$ are each
+trees (i.e., cycle-free), and each contains more than two nodes.
+Let $\{u, v\}$ be an edge in $F_1$ such that $v$ is a leaf node, and
+$\{x, y\}$ be an edge in $F_2$ such that $y$ is a leaf node.  A {\bf
+tree-merger} via edges $\{u, v\}$ and $\{x, y\}$ deletes these two
+edges, and replaces them with the two new edges $\{u, x\}$ and $\{v, y\}$.
+
+\medskip
+\noindent
+\textbf{Transformation~3~ (cycle-tree-merger):}~
+Suppose that $F_1$ and $F_2$ are two distinct connected
+components of a simple graph such that $F_1$ contains a cycle and
+$F_2$ is a tree containing more than two nodes.  Let $\{u, v\}$ be
+an edge in a cycle in $F_1$.  Let $\{x, y\}$ and $\{w, z\}$ be distinct
+edges in $F_2$ such that $y$ and $z$ are leaf nodes.  A {\bf
+cycle-tree-merger} via edges $\{u, v\}$, $\{x, y\}$ and $\{w, z\}$, deletes
+these three edges, and replaces them with the three new edges 
+$\{u, x\}$, $\{v, w\}$, and $\{y, z\}$.
+
+\begin{lemma}  \label{lem:connecting_components}
+There is a polynomial time algorithm that given a $\beta >0$ and a
+simple undirected graph $G$, constructs a simple undirected graph
+$G'$ such that $G$ is a set of connected components of $G'$, there
+is at most one added connected component with more than two nodes,
+and $G'$ is a degree-2 $\beta$  power-law graph.
+\end{lemma}   
+
+\noindent
+\textbf{Proof:}~  
+Let $H$ be the graph constructed from $G$ by the algorithm of
+Proposition \ref{prop:power-law-embedding}.  If $H$ contains more
+than one added connected component with more than two nodes, we can
+repeatedly modify $H$ via a sequence of component-merger transformations
+to reduce the number of these added connected components until there
+is at most one such added connected component.  We let $G'$ be the
+resulting graph.  \QED
+
+Using Lemma \ref{lem:connecting_components}, 
+for any fixed $\beta > 0$, all the results 
+in Section~\ref{sec:general_results} hold, even if the underlying
+graph of the given SIR system is required to be connected and a
+degree-2 $\beta$  power-law graph.  For instance, we have the
+following stronger version of Part~(1) of Theorem~\ref{thm:gen_hardness}.
+
+
+\begin{theorem}\label{thm:hardness_degree_power_law}
+For any $\beta > 0$ and any $t \geq 2$, the \tNewInfv{} problem is
+\cnump-hard, even when the underlying graph of the given SIR system
+is a connected degree-2 $\beta$  power-law graph.
+\end{theorem}
+
+\noindent
+\textbf{Proof:}~  
+Let $\cals{}$ be the SIR system constructed by the reduction used
+in the proof of Part~(1) of Theorem~\ref{thm:gen_hardness}.  
+Let $G_1$ be the underlying graph
+of $\cals{}$.  Let $w_1$ and $w_2$ be two distinct nodes in node
+set $V_2$, corresponding to clauses in the given \#M2SAT problem
+instance.  Let $G_2$ be the graph obtained by adding the edge $\{w_1,
+w_2\}$.  Note that $G_2$ consists of a single connected component,
+and that the edge $\{w_1, w_2\}$ is part of a cycle.  Let $G_3$ be
+the graph constructed from $G_2$ by the algorithm from Proposition
+\ref{prop:power-law-embedding}.  Note that $G_3$ contains at most
+one added connected component with more than two nodes.  If $G_3$
+contains no added connected components with more than two nodes,
+let $G_4$ be $G_3$.  Otherwise, let $G_4$ be obtained by 
+performing either a cycle-merger or a cycle-tree-merger between the
+nodes from $G_2$ and the added connected component, using edge
+$\{w_1, w_2\}$ in the merger.
+
+Let $\calsp{}$ be a SIR system with underlying graph $G_4$, the
+same transmission probabilities as $\cals{}$ on the edges that were
+also in $G_1$, and arbitrary nonzero transmission probabilities on
+the new edges.  We extend the initial configuration by having all
+the added nodes be in state \sstate.  It can be seen that the
+reduction is still valid.  \QED

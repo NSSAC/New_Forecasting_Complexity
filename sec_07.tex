@@ -1,0 +1,754 @@
+\section{Extensions to Other Measures and Models}
+\label{sec:extensions}
+
+\subsection{Overview}
+\label{sse:extensions_overview}
+
+In the previous sections, we presented our results for 
+forecasting certain
+measures (e.g. number of new infections, total number of infections,
+peak infection time) under the SIR model.
+In this section, we point out that simple extensions of our constructions 
+suffice to prove the computational intractability of short-term forecasting 
+problems for many other epidemiologically
+relevant measures defined in \cite{TC+2016} as well as for three
+other epidemic models. 
+
+\subsection{Extensions to Other Measures}
+\label{sse:ext_measures}
+
+Tabataba et al. \cite{TC+2016} present the definitions
+of a number of epidemiologically relevant measures.
+In Section~\ref{sec:general_results} we considered 
+the forecasting problem for 
+one of these measures, namely \textbf{peak time} (i.e., time which
+the number of new infections reaches a maximum value).
+Below, we reproduce the definitions other measures 
+considered in \cite{TC+2016} and 
+formulate the corresponding forecasting problems under the SIR model.
+Next, we show that, in general, each of these problems is
+computationally intractable.
+
+\medskip
+\noindent
+\textbf{(a) Peak Value:}~ The \textbf{peak value} of an epidemic
+is the largest number of new infections that occur at any time. 
+Under the SIR model, the \textbf{Peak Value Forecasting} problem, denoted by
+PVF, is the following: given an SIR system and integer $q$, compute
+the probability that the peak value is at least $q$.
+
+\medskip
+\noindent
+\textbf{(b) Take-Off Value and Time:}~ These measures 
+capture the time at which there is a sharp rise in the 
+number of new infections. 
+To define this measure formally,
+let $\sigma_t$ denote the number of new infections at time $t$.
+The expression $\sigma_{t+1} - \sigma_t$ (which gives the approximate
+slope of the epidemic curve) represents the \textbf{take-off-value} at time $t$.
+A large positive take-off-value indicates a sharp increase 
+in the number of infections.
+The \textbf{take-off-time} refers to the first time at which
+take-off-value exceeds a given threshold.
+Under the SIR model, the \textbf{Take-Off Value Forecasting} problem, denoted by
+TOVF, is the following: given an SIR system and integer $q$, compute
+the probability that at some time during the course
+of the epidemic, the take-off value is at least $q$.
+Likewise, the \textbf{Take-Off Time Forecasting} problem, denoted by
+TOTF, is the following: given an SIR system and integers $\tau$ and $q$, compute
+the probability that the take-off value of at time $\tau$ is at least $q$.
+
+\medskip
+\noindent
+\textbf{(c) Intensity Duration:}~ This quantity is defined as the maximum 
+number of successive
+time units over which the number of new infections is at or above a given threshold. 
+Under the SIR model, the \textbf{Intensity Duration Forecasting} problem, denoted by
+IDF, is the following: given an SIR system and integers $\tau$ and $q$, compute
+the probability that the number of new infections remains at least $q$ for at least
+$\tau$ successive time units.  
+
+\medskip
+\noindent
+\textbf{(d) Speed of the Epidemic:}~ Let $h$ denote the first
+time at which the number of new infections reaches a peak value and let  $\sigma_0$
+and $\sigma_h$ denote the numbers of new infections at times 0 and $h$ respectively.
+The \textbf{speed of the epidemic} is defined as the ratio $(\sigma_h - \sigma_0)/h$.
+This quantity gives the slope of the line that joins the points $(0, \sigma_0)$ and
+$(h, \sigma_h)$ on the curve that represents the number of new infections over time.
+Under the SIR model, the \textbf{Epidemic Speed Forecasting} problem, 
+denoted by ESF, is the following:
+given an SIR system and a rational number $s$, compute the probability that the speed
+of the epidemic is at least $s$.
+
+\medskip
+\noindent
+\textbf{(e) Total Attack Rate:}~ The \textbf{total attack rate by time} $\tau$
+is given by the ratio $n_{\tau}/n$, 
+where $n$ and $n_{tau}$denote respectively the number of nodes 
+in the SIR system and the total number of nodes infected by time $\tau$. 
+Under the SIR model, the \textbf{Total Attack Rate Forecasting} problem, 
+denoted by TARF, is the following:
+given an SIR system, a rational number $\alpha$ and an integer $\tau$, 
+compute the probability that the total attack rate of the epidemic 
+by time $\tau$ is at least $\alpha$.
+
+Having defined the forecasting problems for many measures considered in \cite{TC+2016},
+we now show that, in general, each of these forecasting problems is 
+computationally intractable.
+
+\begin{theorem}\label{thm:hardness_new_measures}
+The following forecasting problems are \cnump-hard:
+(1) Peak Value Forecasting (PVF),
+(2) Take-Off Value Forecasting (TOVF),
+(3) Take-Off Time Forecasting (TOTF),
+(4) Intensity Duration Forecasting (IDF),
+(5) Epidemic Speed Forecasting (ESF) and
+(6) Total Attack Rate Forecasting (TARF).
+\end{theorem}
+
+\medskip
+\noindent
+\textbf{Proof:}~ For each of these forecasting problems, our \cnump-hardness proof
+is obtained by straightforward modifications to the constructions presented in
+the proof of Theorem~\ref{thm:gen_hardness}.
+
+\medskip
+\noindent
+\textbf{Part (1) -- Proof for PVF:}~ We modify 
+the construction presented in the proof of hardness for the \tNewInfs{}
+problem (Part~(1) of the proof of Theorem~\ref{thm:gen_hardness}) as follows.  
+While node sets $V_0$ and $V_1$ remain the same as before, $V_2$ consists
+of $mn$ nodes, with $n$ nodes corresponding to each clause of the \mtsat{}
+instance.
+This construction ensures that the peak number of new infections 
+is at most $mn$ and that this number of new infections can occur
+only at time $t = 2$. 
+It can be verified that the probability that the peak value is $\geq mn$ is
+equal to $N/2^n$, where $N$ is the number of satisfying assignments to the
+given \mtsat{} instance.
+
+
+\medskip
+\noindent
+\textbf{Part (2) -- Proof for TOVF:}~ We modify 
+the construction presented in the proof of hardness for the \tNewInfs{}
+problem (Part~(1) of the proof of Theorem~\ref{thm:gen_hardness}) as follows.  
+While node sets $V_0$ and $V_1$ remain the same as before, $V_2$ consists
+of $(n+1)m$ nodes, with $n+1$ nodes corresponding to each clause of the \mtsat{}
+instance.
+The take-off value $q$ is set to $(n+1)m-n$.
+As in Part (1), it can be verified that the number of new infections
+at any time is at most $(n+1)m$.
+For any infection pattern that represents a satisfying assignment to the
+given \mtsat{} instance, all $(n+1)m$ nodes in $V_2$ get infected 
+at $t = 2$. 
+Since the maximum number of nodes that can get infected at time $t = 1$ is $n$,
+the take-off value is at least $(n+1)m-n$.
+On the other hand,
+for any infection pattern that represents an assignment that does not satisfy the
+given \mtsat{} instance, at most $(n+1)(m-1)$ nodes in $V_2$ get infected 
+at $t = 2$. 
+Since at least one node in $V_1$ must get infected at time $t = 1$, 
+the take-off value  is at most $(n+1)(m-1)-1$ = $(n+1)m - n -1$.
+Thus, the probability that the take-off value is $\geq (n+1)m-n$ is
+equal to $N/2^n$, where $N$ is the number of satisfying assignments to the
+given \mtsat{} instance.
+
+\medskip
+\noindent
+\textbf{Part (3) -- Proof for TOTF:}~ The proof is the same as the
+one presented for TOVF above. 
+The probability that take-off value at time $\tau = 1$ is at least $(n+1)m-n$ is
+equal to $N/2^n$, where $N$ is the number of satisfying assignments to the
+given \mtsat{} instance.
+By adding a simple path of appropriate length to the node $s$, it can be
+seen that the result holds for any $\tau \geq 1$. 
+
+\medskip
+\noindent
+\textbf{Part (4) -- Proof for IDF:}~ We modify 
+the construction presented in the proof for PVF (Part (1) above)
+as follows.
+We add another set $V_3$ of $mn$ nodes.
+Node set $V_3$ is in one-to-one correspondence with $V_2$, and there is
+an edge with transmission probability 1 between a node in $V_2$ and its
+corresponding node in $V_3$.
+Thus, the number of infections at $t = 3$ is at least as large as that at $t = 2$.
+Therefore, the probability that the number of infections is at least $mn$ for
+two successive time units is 
+equal to $N/2^n$, where $N$ is the number of satisfying assignments to the
+given \mtsat{} instance.
+We note that this construction can be readily extended to increase the intensity
+duration to any value $\tau \geq 2$.
+
+\medskip
+\noindent
+\textbf{Part (5) -- Proof for ESF:}~ The construction is the same
+as that for PVF (Part (1) above).
+Recall that in that construction,
+the peak number of new infections 
+is at most $mn$ and that this number of new infections can occur
+only at time $t = 2$. 
+Thus, the probability that the speed of the epidemic is at least
+$(mn-1)/2$ is equal to $N/2^n$, where $N$ is the number of 
+satisfying assignments to the given \mtsat{} instance.
+
+
+\medskip
+\noindent
+\textbf{Part (6) -- Proof for TARF:}~ The construction is the same
+as that presented in the proof for TOVF (Part (2) above). 
+In that construction, the total number of nodes = $1 + n + m(n+1)$ = $(m+1)(n+1)$. 
+For any infection pattern that represents a satisfying assignment to the
+given \mtsat{} instance, all $(n+1)m$ nodes in $V_2$ get infected 
+at $t = 2$. 
+Since there is one node (namely, $s$) that is infected at time 0,
+at least $(n+1)m+1$ nodes get infected by time 2 if the infection
+pattern corresponds to a satisfying assignment of the given \mtsat{}
+instance; that is, the attack rate at time $t = 2$ is at least $[(n+1)m+1]/[(m+1)(n+1)]$.
+On the other hand,
+for any infection pattern that represents a non-satisfying assignment to the
+given \mtsat{} instance, at most $(n+1)(m-1)$ nodes in $V_2$ get infected 
+at $t = 2$. 
+Thus, for this case, the total number of nodes that can get infected by
+time 2 is at most $(n+1)(m-1) + n+1$ = $(n+1)m$; thus, the attack rate
+at $t = 2$ is $[(n+1)m]/[(m+1)(n+1)]$.
+Thus, the probability that the attack rate at $t = 2$ is $\geq [(n+1)m+2]/[(m+1)(n+1)]$ is
+equal to $N/2^n$, where $N$ is the number of satisfying assignments to the
+given \mtsat{} instance. 
+As before, this result can also be extended to any value of $t \geq 2$. \QED
+
+Our results for the forecasting problems associated with the 
+various measures considered in this section are summarized in
+Table~\ref{tab:new_measures_results}.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|l|}\hline
+\multicolumn{1}{|c|}{\textbf{Problem}} &
+\multicolumn{1}{|c|}{\textbf{Result}} \\ \hline\hline
+Peak Value Forecasting (PVF) & \cnump-hard \\ \hline
+Take-Off Value Forecasting (TOVF) & \cnump-hard \\ \hline
+Take-Off Time Forecasting (TOTF) & \cnump-hard for any $t \geq 1$ \\ \hline
+Intensity Duration Forecasting (IDF) & \cnump-hard for any duration $\tau \geq 2$ \\ \hline
+Epidemic Speed Forecasting (ESF) & \cnump-hard \\ \hline
+Total Attack Rate Forecasting (TARF) & \cnump-hard for any $t \geq 2$ \\ \hline\hline
+\end{tabular}
+\end{center}
+\caption{Results for Forecasting Problems for Various Epidemiological 
+Measures from \cite{TC+2016}}
+\label{tab:new_measures_results}
+\end{table}
+
+\subsection{Extensions to Other Epidemic Models}
+\label{sse:ext_models}
+
+We present extensions of our results to 
+three other epidemic models, namely
+SI, SIS and probabilistic threshold.
+For the sake of brevity, we present our proofs
+mainly for the \tNewInfs{} problem under these models.
+Results for other forecasting problems defined 
+in Section~\ref{sse:prob_formulation} can be established 
+in a similar manner.
+
+\subsubsection{Extensions to the SI Model}
+\label{sss:si_extensions}
+
+The SI model is a variant of the SIR model.
+Recall that in the latter model, a node remains in state \istate{}
+for a certain amount of time and then changes to the \rstate{} state.
+In contrast, under the SI model \cite{Easley_Kleinberg-2010},
+once a node changes to the state \istate, it remains in
+that state forever; such a node can continue to infect
+other nodes in future time steps.
+The definition of the \tNewInfs{} problem under the SI model 
+is the same as that under the SIR model: given an SI system 
+(specified by an undirected graph, the transmission probability for
+each edge and the initial configuration), a subset $S$ of nodes
+and integers $t$ and $q$, compute the probability that there will 
+be at least $q$ new infections among the nodes in $S$ at time $t$.
+The following result shows that this problem remains computationally
+intractable for any $t \geq 2$.
+
+\begin{proposition}\label{pro:si_model_two_new_inf}
+The \tNewInfs{} problem under the SI model is \cnump-hard 
+even for any $t \geq 2$.
+\end{proposition}
+
+\medskip
+\noindent
+\textbf{Proof:}~ We first consider the case where $t = 2$.
+The reduction from \mtsat{} to this problem is virtually identical to that
+presented in the proof of Part~(1) of Theorem~\ref{thm:gen_hardness}.
+The only difference is that we let $S = V_2$ and
+$q = |V_2| = m$. 
+The construction ensures that the nodes in $S$ cannot be in state \istate{} 
+before $t = 2$.
+The argument to show that each infection pattern which causes all
+the nodes in $S$ to get infected at $t = 2$ corresponds to a
+satisfying assignment of the \mtsat{} instance is the same
+as that presented in the proof of Part~(1) of 
+Theorem~\ref{thm:gen_hardness}.
+
+The extension of the above proof for any $t \geq 3$ is identical to that 
+presented in the proof of Part~(1) of Theorem~\ref{thm:gen_hardness}.
+Given an integer $t \geq 3$, we construct a simple path
+$\langle s_0, s_1, \ldots, s_{t-3}\rangle$
+consisting of $t-2$ new nodes and add an edge from $s_{t-3}$ to $s$.
+The transmission probability for all the new edges is set to 1.
+At time 0, node $s_0$ is in state \istate{} and all
+other nodes are in state \sstate.
+The new nodes and edges ensure that
+node $s$ gets infected at time $t-2$.
+The requirement is to compute the probability that at least $m$
+nodes in $V_2$ get infected at time $t$.
+It can be verified that the probability of this event is the
+same as the probability that an assignment chosen uniformly
+randomly satisfies all the clauses of the \mtsat{} instance.
+\QED
+
+It can also be seen that when $t = 1$, the \tNewInfs{} problem
+under the SI model can be solved efficiently using the dynamic
+programming algorithm given in the proof of 
+Theorem~\ref{th:one-step-forecasting} since the corresponding
+configuration constraint is 1-symmetric 
+(as explained in Part~(a) of Example~\ref{ex:r_symm}).
+
+Using proofs similar to that for Proposition~\ref{pro:si_model_two_new_inf},
+it can be seen that problems \tTotInfs{} and \tPeak{} also remain \cnump-hard
+under the SI model for $t \geq 2$.
+Likewise, the proof in \cite{SD-2012} can also be seen to imply
+that \tVuls{} problem remains \cnump-hard when $t$ is part of the problem instance.
+
+Results similar to those in Section \ref{sec:vul} for the \tTotVuls{}
+problem can also be shown for the SI model. 
+In this case, the
+solution to the \tTotVuls{} problem for a node $v$ is defined as the
+probability that $v$ gets infected by time $t$.  
+We consider a ``time-expanded'' graph $G_{exp}$ defined in the following manner.
+$G_{exp}$ is a directed graph with node sets 
+$V^i=V$, for $i=0,\ldots, t$. 
+We will refer to the ``copy'' of node $v$ in $V^i$ by $v^i$.
+For any $i$, there are no edges within the set $V^i$.  
+For each edge $\{u, v\}\in E$, we have the directed edges 
+$(u^i, v^{i+1})$ and $(v^i, u^{i+1})$, for $0 \leq i <t$,
+with the transmission probability 
+$p(u^i, v^{i+1}) = p(v^i, u^{i+1}) = p(u,v)$.  
+In addition, we have edges $(u^i, u^{i+1})$ for all
+$u\in V$, $1 \leq i < t$, with $p(u^i, u^{i+1})=1$.  
+We now consider the SIR
+model on the instance $G_{exp}$ with the probabilities defined as
+above, and the node $s^0$ being the source. 
+This model is equivalent to the SI model on the graph $G$. 
+This can be shown inductively by
+using the fact that if node $v^i$ gets infected in $G_{exp}$, then
+all nodes $v^j, j>i$ will get infected.  
+Therefore, the probability
+that a node $v^t$ is infected in the SIR model in $G_{exp}$ equals
+the probability that $v$ is infected at time $t$ under the SI model
+on $G$.
+
+We now apply the algorithm from Section \ref{sec:vul} to the SIR
+model on graph $G_{exp}$, except that we consider directed paths
+from $s^0$ to node $v^t$, for $v\in S$. 
+The algorithm and
+analysis presented in the proof of 
+Theorem \ref{thm:totvul_approx} extend to the directed
+setting as well, giving us the following result.
+
+\begin{proposition}\label{pro:si_model_ttotvul}
+For any $\epsilon, \delta\in(0,1)$, an
+$(\epsilon, \delta)$-approximation to the \tTotVuls{} problem 
+for set $S$ under the SI model on $G$
+can be computed in time 
+$O(\frac{1}{\epsilon^2}\,m\,\Delta^{2t|S|}\log{(1/\delta)})$,
+where $\Delta$ is the maximum node degree in $G$. \QED 
+\end{proposition}
+
+\subsubsection{Extensions to the SIS Model}
+\label{sss:sis_extensions}
+
+The SIS model \cite{Easley_Kleinberg-2010} is also a variant 
+of the SIR model.
+The only difference is that under the SIS model,
+the state of a node changes from \istate{} to \sstate{}
+after a certain time period.
+For consistency with our results for the SIR model,
+we will assume that each node in state \istate{} changes
+to \sstate{} after one time unit.
+A major difference between the SIS model and the SIR model
+is that a node can get reinfected many times during the 
+diffusion process. 
+As a consequence, there are two possible ways to formulate the \tNewInfs{}
+problem under the SIS model.
+In the first formulation, the focus is on nodes which are state \sstate{} 
+at $t-1$ and change to \istate{} at time $t$. 
+(Such nodes may have been in state \istate{} during the period
+0 to $t-2$.)
+In the second formulation, the focus is on the nodes which
+get infected for the \emph{first} time at $t$.
+(Thus, such nodes are in state \sstate{} during the period 0 to $t-1$
+and their state changes to \istate{} at $t$.)
+We will present our result under the first formulation; it
+can be seen that the result also holds under the second formulation.
+
+Thus, our formulation of the \tNewInfs{} problem under the SIS
+model is as follows:
+given an SIS system (specified by an undirected graph, 
+the transmission probability for
+each edge and the initial configuration), a subset $S$ of nodes
+and integers $t$ and $q$, compute the probability that 
+at least $q$ nodes in the set $S$ are in state \istate{} 
+at time $t$.
+The following result shows that this problem remains computationally
+intractable for any $t \geq 2$.
+
+\begin{proposition}\label{pro:sis_model_two_new_inf}
+The \tNewInfs{} problem under the SIS model is \cnump-hard 
+for any $t \geq 2$.
+\end{proposition}
+
+\smallskip
+\noindent
+\textbf{Proof:}~ We will present the details for $t = 2$; 
+the extension of the proof to any $t \geq 3$ is along the same lines
+as mentioned in the proof of Proposition~\ref{pro:si_model_two_new_inf}.
+
+For $t = 2$, the reduction from \mtsat{} 
+presented in the proof of Part~(1) of Theorem~\ref{thm:gen_hardness}
+can again be used along with the assignments 
+$S = V_2$ and $q = |V_2| = m$. 
+The construction ensures that the nodes in $S$ cannot get 
+infected for the first time before $t = 2$. 
+Thus, the previous argument
+can be used to conclude that 
+each infection pattern which causes all
+the nodes in $S$ to get infected time at
+at $t = 2$ corresponds to a
+satisfying assignment of the \mtsat{} instance. 
+\QED
+
+As in the SI model, when $t = 1$, the \tNewInfs{} problem
+under the SIS model can also be solved efficiently using the dynamic
+programming algorithm given in the proof of 
+Theorem~\ref{th:one-step-forecasting} since the corresponding
+configuration constraint is 1-symmetric and no reinfections
+are possible for $t = 1$.
+
+Using proofs similar to that for Proposition~\ref{pro:sis_model_two_new_inf},
+it can be seen that appropriate versions of problems \tTotInfs{} and \tPeak{} 
+also remain \cnump-hard under the SI model for $t \geq 2$.
+Likewise, the proof in \cite{SD-2012} can also be seen to imply
+that \tVuls{} problem remains \cnump-hard when $t$ is part of the problem instance.
+
+A result similar to Proposition~\ref{pro:si_model_ttotvul} for the
+\tTotVuls{} problem under the SI model (Section \ref{sss:si_extensions}) 
+can also be obtained for the SIS model.
+Here, we consider the solution to the \tTotVuls{} problem for
+a node $v$ to be the probability that $v$ gets infected 
+\emph{at least once} by time $t$.
+We use a time expanded graph $G_{exp}$ that is the same as in
+Section \ref{sss:si_extensions}, except for the following:
+we do not have the edges $(u^i, u^{i+1})$ for $u\in V, i <  t$. 
+It can be shown by induction that 
+the SIR system on the resulting graph $G_{exp}$, 
+is equivalent to the SIS model on the graph $G$.
+This gives us the same result as 
+Proposition~\ref{pro:si_model_ttotvul} for the SIS model.
+
+
+\subsubsection{Extensions to the Probabilistic Threshold Model}
+\label{sss:pthresh_extensions}
+
+In the probabilistic threshold (PT) model, each node has two possible states,
+namely \sstate{} and \istate.
+This model was considered in \cite{BH+2011} using state values 0 and
+1 for \sstate{} and \istate{} respectively.
+As in the SI model, once a node reaches the state \istate, it remains in that
+state forever and may infect other nodes.
+Unlike the SIR, SI and SIS models, the probability values in the PT
+model are \emph{not} associated with the edges.
+Instead, each node $v$ of the graph has a \textbf{threshold} $\tau_v$ 
+and a probability $p_v$ with the following interpretation.
+At time $t$, let node $v$ be in state \sstate.
+\begin{enumerate}
+\item If the number of neighbors of $v$ in state \istate{} is \emph{less than}
+$\tau_v$, then the state of $v$ at $t+1$ is also \sstate.
+
+\item If at least $\tau_v$ of $v$'s neighbors are in state \istate,
+then the state of $v$ at time $t+1$ is \istate{} with probability $p_v$ and
+\sstate{} with probability $1 - p_v$.
+\end{enumerate}
+
+The definition of the \tNewInfs{} problem under the PT model
+is the same as that under the SIR model: given a PT system
+(specified by an undirected graph, the threshold and probability values
+for each node and the initial configuration), a subset $S$ of nodes
+and integers $t$ and $q$, compute the probability that there will
+be at least $q$ new infections among the nodes in $S$ at time $t$.
+The following result shows that this problem remains computationally
+intractable for any $t \geq 2$.
+
+\begin{proposition}\label{pro:pt_model_two_new_inf}
+The \tNewInfs{} problem under the PT model is \cnump-hard 
+even for any $t \geq 2$.
+\end{proposition}
+
+\smallskip
+\noindent
+\textbf{Proof:}~ For $t = 2$, the proof is by a minor modification 
+to the reduction from \mtsat{} 
+presented in the proof of Part~(1) of Theorem~\ref{thm:gen_hardness}.
+The graph $G(V,E)$ constructed from the \mtsat{} instance
+is the same as before.
+Further, we let $S = V_2$ and $q = |V_2| = m$. 
+The probability and threshold values for the nodes are constructed as follows.
+Since the initial state of node $s$ is \istate, its threshold and
+probability value are chosen arbitrarily.
+For each node $v \in V_1$, the threshold value is 1 and the
+probability is $1/2$. 
+For each node $v \in V_2$, the threshold and probability values
+are both 1. 
+Once again, 
+the construction ensures that the nodes in $S$ cannot get 
+infected before $t = 2$. 
+Further, since the probability value for each node $v \in V_1$ is $1/2$,
+each infection pattern has a probability of $1/2^n$.
+With this observation, it can be seen that 
+each infection pattern which causes all
+the nodes in $S$ to get infected at $t = 2$ corresponds to a
+satisfying assignment of the \mtsat{} instance. 
+
+To extend the proof for any $t \geq 3$, 
+we construct a simple path
+$\langle s_0, s_1, \ldots, s_{t-3}\rangle$
+consisting of $t-2$ new nodes and add an edge from $s_{t-3}$ to $s$.
+At time 0, node $s_0$ is in state \istate{} and all
+other nodes are in state \sstate.
+The threshold and probability values for $s_0$ are chosen arbitrarily;
+for all the other nodes in the path and for node $s$ itself,
+the threshold and probability values are both chosen as 1.
+The new nodes and edges ensure that
+node $s$ gets infected at time $t-2$.
+The requirement is to compute the probability that at least $m$
+nodes in $V_2$ get infected at time $t$.
+It can be seen that this probability is equal to $N/2^n$, where
+$N$ is the number of satisfying assignments to
+the \mtsat{} instance.  \QED
+
+We now show that the above result is tight by giving a
+dynamic programming algorithm for 
+the \tNewInfs{} problem for $t = 1$ under the PT model.
+This algorithm cannot be derived from the general dynamic programming
+framework presented in Section~\ref{sss:constrained_config} since
+the PT model does not use edge probabilities.
+
+\begin{proposition}\label{pro:pt_t_1_dyn_prog}
+The \OneNewInfs{} problem under the PT model can be solved in 
+polynomial time.
+\end{proposition}
+
+\smallskip
+\noindent
+\textbf{Proof:}~ Let $S$ denote the subset of nodes and let $q$ be
+the integer specified in the \OneNewInfs{} problem instance.  
+Our goal is to compute the probability that at $t = 1$, at least $q$
+nodes in $S$ are infected.
+Let $S = \{v_1, v_2, \ldots, v_k\}$ so that $|S| = k$.
+
+\medskip
+For each node $v \in S$, let $\pi(v)$ denote the probability that
+$v$ is infected at $t = 1$.
+It is easy to compute $\pi(v)$:
+if the number of neighbors of $v$
+in state \istate{} at $t = 0$ is at least $\tau_v$, then $\pi(v)$ =
+$p_v$;~ otherwise, $\pi(v) = 0$. 
+
+\medskip
+The dynamic programming table $P$ is a two-dimensional array with $k$ rows
+and $k+1$ columns.
+For $1 \leq i \leq k$ and $0 \leq j \leq k$,
+entry $P[i,j]$ of this array will store the probability that \emph{exactly}
+$j$ nodes of the set $\{v_1, \ldots, v_i\}$ are infected at $t = 1$. 
+
+\medskip
+\noindent
+To begin with, all the entries of row 1 of $P$ can be computed as follows. 
+
+\medskip
+\noindent
+\hspace*{0.25in}
+\mbox{
+\begin{tabular}{lcl}
+$P[1, 0]$ &=& Probability that $v_1$ is not infected at $t = 1$ \\
+          &=& $1 - \pi(v_1)$.  \\ [1ex]
+$P[1, 1]$ &=& Probability that $v_1$ is infected at $t = 1$ \\
+          &=& $\pi(v_1)$. \\ [1ex]
+$P[1, j]$ &=& 0,~ $2 \leq j \leq k$.  
+\end{tabular}
+}
+
+\medskip
+\noindent
+Now, assume that for some $i \geq 1$, all the entries of row $i$ of $P$ have been computed.
+The entries of row $i+1$ of $P$ can be computed as follows.
+
+\medskip
+\noindent
+For $j = 0$, we have
+
+\medskip
+\noindent
+\hspace*{0.25in}
+\mbox{
+\begin{tabular}{lcl}
+$P[i+1, 0]$ &=& $P[i, 0] \times $ Pr\{$v_{i+1}$ is not infected at $t =1$\} \\
+            &=& $P[i,0] \times (1-\pi(v_{i+1})).$ \\ 
+\end{tabular}
+}
+
+\medskip
+\noindent
+For $1 \leq j \leq i+1$, we have
+
+\medskip
+\noindent
+\hspace*{0.25in}
+\mbox{
+\begin{tabular}{lcl}
+$P[i+1, j]$ &=& $P[i, j] \times $ Pr\{$v_{i+1}$ is not infected at $t =1$\} $+$  \\
+            & & $P[i, j-1] \times $ Pr\{$v_{i+1}$ is infected at $t =1$\}  \\ 
+            &=& $P[i,j] \times (1-\pi(v_{i+1})) + P[i,j-1] \times \pi(v_{i+1}).$
+\end{tabular}
+}
+
+\medskip
+\noindent
+Finally, note that $P[i+1, j] = 0$~ for~ $i+2 \leq j \leq k$.
+
+\medskip
+Once all the entries of array $P$ are available, the answer to the \OneNewInfs{}
+problem is given by $\sum_{j=q}^{k} P[k,j]$.
+It can be verified that the algorithm runs in polynomial time. \QED 
+
+Using proofs similar to that for Proposition~\ref{pro:pt_model_two_new_inf},
+it can be seen that appropriate versions of problems \tTotInfs{} and \tPeak{} 
+also remain \cnump-hard under the SI model for $t \geq 2$.
+However, for the \tVuls{} problem, a new hardness result can be established
+under the PT model. 
+In particular, as we show below, under the PT model,
+the \tVuls{} problem is \cnump-hard for any \emph{fixed} value of $t \geq 3$. 
+In contrast, under the SIR, SI and SIS models, although the \tVuls{} problem is
+computationally intractable when $t$ is part 
+of the problem instance \cite{SD-2012}, the complexity of the 
+problem for \emph{fixed} values of $t \geq 3$ is open.
+
+\begin{proposition}\label{pro:tvul_pt_model}
+The \tVuls{} problem under the PT model is \cnump-hard 
+for each fixed value of $t \geq 3$.
+\end{proposition}
+
+\noindent
+\textbf{Proof:}~ We will first show that the \tVuls{} problem is
+\cnump-hard for $t = 3$ and then point out how the proof can be
+extended for any fixed value of $t \geq 4$.
+
+The proof is by a minor modification 
+to the reduction from \mtsat{} to \tNewInfs{} problem presented
+in the proof of Proposition~\ref{pro:pt_model_two_new_inf} above.
+We use the same graph $G(V,E)$ constructed in that proof 
+along with another node $w$ which is adjacent to all the $m$ nodes in $V_2$.
+The threshold for $w$ is $m$ and its probability value is 1.
+The threshold and probability values for all the other nodes are the same as the
+ones specified in the proof of Proposition~\ref{pro:pt_model_two_new_inf}.
+The goal is to compute the vulnerability of node $w$ at $t = 3$
+(i.e., the probability that $w$ gets infected at $t = 3$).
+
+It can be seen from the construction that $w$ gets infected at $t = 3$
+iff all the nodes in $V_2$ get infected at $t = 2$.
+Since computing the probability of the latter event is \cnump-hard
+(Proposition~\ref{pro:pt_model_two_new_inf}), it follows
+that computing the vulnerability of $w$ at $t = 3$ is also
+\cnump-hard.
+
+To extend the proof to any fixed value of $t \geq 4$, say $r$, 
+we add a simple path $\langle w_1, w_2, \ldots, w_{r-3}\rangle$
+consisting of $r-3$ nodes to $w$.
+For each node $w_j$ in the path, the threshold and probability values
+are both chosen to be 1.
+It can be seen that the vulnerability of node $w_{r-3}$ at $t = r$ is
+equal to the vulnerability of node $w$ at $t = 3$.
+\QED
+
+We now observe that the result of Proposition~\ref{pro:tvul_pt_model}
+is tight by pointing out that the \OneVuls{} and \TwoVuls{} problems
+can be solved efficiently under the PT model.
+
+\begin{proposition}\label{pro:pt_one_two_vul_poly}
+The \OneVuls{} and \TwoVuls{} problems can be solved in polynomial
+time for the PT model.
+\end{proposition}
+
+\noindent
+\textbf{Proof:}~ The result for the \OneVuls{} problem is obvious 
+since for any node $v$,
+we need to find only the number of neighbors of $v$ 
+in state \istate{} at $t = 0$.
+If this number is at least $\tau_v$, then the vulnerability $\pi(v)$ of $v$
+at $t = 1$ is $p_v$;~ otherwise, $\pi(v) = 0$. 
+
+To solve the \TwoVuls{} problem for any node $v$, 
+let $I_v$ denote the set of neighbors of $v$
+which are in state \istate{} at $t = 0$.
+Also, let $R_v$ denote the set of neighbors of $v$ such that 
+each node $w \in R_v$ satisfies two conditions: 
+$w$ is in state \sstate{} at $t = 0$ 
+and $w$ is adjacent to 
+at least one node in state \istate{} in the initial configuration.
+%%Let $\tau_v$ denotes the threshold of node $v$.
+We can compute the vulnerability of $v$ at $t = 2$ as follows.
+If~ $|I_v| \geq \tau_v$,~ then the vulnerability of $v$ at $t = 2$ is 
+given by  $(1-p_v) \times p_v$. 
+Otherwise, we proceed as follows.
+\begin{description}
+\item{(a)} Compute the vulnerability $\pi(v)$ of $v$ at $t = 1$ as discussed above.
+\item{(b)} Compute the the probability $\pi'$ that at least $\tau_v - |I_v|$ nodes in $R_v$ 
+           are infected at $t = 1$.  (This can be done using the dynamic programming
+           algorithm discussed in the proof of Proposition~\ref{pro:pt_t_1_dyn_prog}.)
+\item{(c)} The vulnerability of $v$ at $t = 2$ is given by 
+           $[1-\pi(v)] \times \pi' \times p_v$. 
+\end{description}
+It can be verified that the above algorithm runs in polynomial time.
+\QED
+
+Our results for forecasting problems under the SI, SIS and PT models
+are summarized in Table~\ref{tab:results_for_models}.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|c|p{4in}|}\hline
+\multicolumn{1}{|c|}{\textbf{Model}} &
+\multicolumn{1}{|c|}{\textbf{Results}} \\ \hline\hline
+SI Model & {(a)~\tNewInfs, \tTotInfs{} and \tPeak{} are \cnump-hard for any $t \geq 2$.
+            \newline
+           (b)~ There is a randomized approximation scheme for \newline
+           \tTotVuls{} when $t$ and $|S|$ are fixed.} \\ \hline
+SIS Model & {(a)~\tNewInfs, \tTotInfs{} and \tPeak{} 
+             are \cnump-hard for any $t \geq 2$.  \newline
+           (b)~ There is a randomized approximation scheme for \newline
+           \tTotVuls{} when $t$ and $|S|$ are fixed. 
+           (The quantity being approximated is the probability that the
+            given node gets infected at least once by time $t$.)} \\ \hline
+PT Model & {(a)~\tNewInfs, \tTotInfs{} and \tPeak{} are 
+            \cnump-hard for any $t \geq 2$.  \newline
+           (b)~ \tVuls{} is \cnump-hard for any fixed $t \geq 3$ even
+              when $|S| = 1$; however, the problem is
+           efficiently solvable for any $S$ for $t = 1$ and $t = 2$.} \\ \hline\hline
+\end{tabular}
+\end{center}
+\caption{Summary of Results for Forecasting Problems Under Various Models}
+\label{tab:results_for_models}
+\end{table}
+

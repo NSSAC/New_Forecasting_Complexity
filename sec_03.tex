@@ -1,0 +1,629 @@
+\section{Short-Term Forecasting Problems for SIR Systems}
+\label{sec:prob_form}
+
+\iffalse
+%%%%%%%%%%%%%%%%%%% These definitions have been moved to prob_names.tex %%%%%%%%%
+
+%%% Macros for problem names.
+
+%%% General forms.
+\newcommand{\tNewInfs}{\mbox{$t$}-\textsc{NewInf}\mbox{$(S)$}}
+\newcommand{\tNewInfv}{\mbox{$t$}-\textsc{NewInf}\mbox{$(V)$}}
+\newcommand{\tTotInfs}{\mbox{$t$}-\textsc{TotInf}\mbox{$(S)$}}
+\newcommand{\tTotInfv}{\mbox{$t$}-\textsc{TotInf}\mbox{$(V)$}}
+\newcommand{\tPeak}{\mbox{$t$}-\textsc{Peak}}
+\newcommand{\tVuls}{\mbox{$t$}-\textsc{Vul}\mbox{$(S)$}}
+\newcommand{\tVulv}{\mbox{$t$}-\textsc{Vul}\mbox{$(V)$}}
+\newcommand{\tTotVuls}{\mbox{$t$}-\textsc{TotVul}\mbox{$(S)$}}
+\newcommand{\tTotVulv}{\mbox{$t$}-\textsc{TotVul}\mbox{$(V)$}}
+
+%%% Versions with t = 2.
+\newcommand{\TwoNewInfs}{\mbox{$2$}-\textsc{NewInf}\mbox{$(S)$}}
+\newcommand{\TwoNewInfv}{\mbox{$2$}-\textsc{NewInf}\mbox{$(V)$}}
+\newcommand{\TwoTotInfs}{\mbox{$2$}-\textsc{TotInf}\mbox{$(S)$}}
+\newcommand{\TwoTotInfv}{\mbox{$2$}-\textsc{TotInf}\mbox{$(V)$}}
+\newcommand{\TwoPeak}{\mbox{$2$}-\textsc{Peak}}
+\newcommand{\TwoVuls}{\mbox{$2$}-\textsc{Vul}\mbox{$(S)$}}
+\newcommand{\TwoVulv}{\mbox{$2$}-\textsc{Vul}\mbox{$(V)$}}
+\newcommand{\TwoTotVuls}{\mbox{$2$}-\textsc{TotVul}\mbox{$(S)$}}
+\newcommand{\TwoTotVulv}{\mbox{$2$}-\textsc{TotVul}\mbox{$(V)$}}
+
+%%% Versions with t = 1.
+\newcommand{\OneNewInfs}{\mbox{$1$}-\textsc{NewInf}\mbox{$(S)$}}
+\newcommand{\OneNewInfv}{\mbox{$1$}-\textsc{NewInf}\mbox{$(V)$}}
+\newcommand{\OneTotInfs}{\mbox{$1$}-\textsc{TotInf}\mbox{$(S)$}}
+\newcommand{\OneTotInfv}{\mbox{$1$}-\textsc{TotInf}\mbox{$(V)$}}
+\newcommand{\OnePeak}{\mbox{$1$}-\textsc{Peak}}
+\newcommand{\OneVuls}{\mbox{$1$}-\textsc{Vul}\mbox{$(S)$}}
+\newcommand{\OneVulv}{\mbox{$1$}-\textsc{Vul}\mbox{$(V)$}}
+\newcommand{\OneTotVuls}{\mbox{$1$}-\textsc{TotVul}\mbox{$(S)$}}
+\newcommand{\OneTotVulv}{\mbox{$1$}-\textsc{TotVul}\mbox{$(V)$}}
+
+%%% Version with t = 3.
+\newcommand{\ThrNewInfs}{\mbox{$3$}-\textsc{NewInf}\mbox{$(S)$}}
+\newcommand{\ThrNewInfv}{\mbox{$3$}-\textsc{NewInf}\mbox{$(V)$}}
+\newcommand{\ThrTotInfs}{\mbox{$3$}-\textsc{Tot}\mbox{$(S)$}}
+\newcommand{\ThrTotInfv}{\mbox{$3$}-\textsc{Tot}\mbox{$(V)$}}
+%%%%%%%%%%%%%%%%%%% End of problem names %%%%%%%%%
+\fi
+
+\subsection{Problems Considered}
+\label{sse:prob_formulation}
+
+For simplicity, we will represent an SIR
+system by the underlying graph $G(V,E)$, with the
+understanding that the transmission probability for each
+edge $e \in E$ is also given.
+It can be seen from the discussion in Section~\ref{sec:sir_dyn_system}
+that the graph and the transmission probability values completely
+specify all local transition functions. 
+We will also use the phrase ``initial configuration" of the
+system to mean the configuration at time $t = 0$.
+We now present formal definitions of the forecasting problems 
+studied in this paper.
+In each case, the goal is to compute the probability 
+of a certain event; the long name of a problem describes the
+corresponding event.
+We begin with a problem whose goal is to compute
+the probability that a certain number of 
+new infections occur at time $t$. 
+
+\medskip
+
+\noindent
+\textbf{(1)~ Number of New Infections in a set $S$ at a Given Time}~ (\tNewInfs)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR system $G(V,E)$ along with its initial
+configuration \cali; set $S \subseteq V$; integers $q \leq |S|$ and $t \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the number of nodes in $S$ which get infected at time 
+$t$ is at least $q$.
+
+\medskip
+The next problem concerns the total number of 
+infections that occur by a given time $t$. 
+Using $g(S, j)$ to denote the number of nodes from set $S$ in state \istate{}
+at time $j$ (in a stochastic outcome), we note that the total number of infections 
+within set $S$ by
+time $t$ is given by $\sum_{j=0}^{t} g(S, j)$ (in that outcome).
+
+\medskip
+\noindent
+\textbf{(2)~ Total Number of Infections in a set $S$ by a Given Time}~ (\tTotInfs)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR system $G(V,E)$ along with its initial
+configuration \cali; set $S \subseteq V$; integers $q \leq |V|$ and $t \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following event:~
+the number of nodes
+in $S$ which are infected by time $t$ is at least $q$.
+
+\medskip
+The next two problems concern the probability that all the nodes
+in a specified subset $S$ get infected. 
+This probability is referred to as the \textbf{vulnerability} of the set $S$
+\cite{BB+2009}.
+
+\medskip
+\noindent
+\textbf{(3)~ Vulnerability of a set $S$ at a Given Time}~ (\tVuls)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR system $G(V,E)$ along with its initial
+configuration \cali;~ a subset of nodes $S \subseteq V$;~ an integer $t \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ \emph{all} the nodes in $S$ get infected ~\emph{at}~ time $t$. 
+
+\medskip
+We note that the result of the \tVuls{} problem is the
+probability that \emph{all} nodes in $S$ get infected 
+\emph{simultaneously at} time $t$.
+
+\medskip
+\noindent
+\textbf{(4)~ Vulnerability of a set $S$ by a Given Time}~ (\tTotVuls)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR system $G(V,E)$ along with its initial
+configuration \cali;~ a subset of nodes $S \subseteq V$;~ an integer $t \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ all the nodes in $S$ get infected ~\emph{by}~ time $t$. 
+
+\medskip
+Note the difference
+between the problems \tVuls{} and \tTotVuls{}--in the latter problem, 
+the nodes in $S$ are not required to get infected
+simultaneously at time $t$.
+
+\medskip
+Problems \tVuls{} and \tTotVuls{} are special versions 
+of \tNewInfs{} and \tTotInfs{} respectively with $q = |S|$.
+For simplicity, we will continue to use \tVuls{} and \tTotVuls.
+
+\medskip
+When $S = V$ (i.e., the set of all nodes),
+the above four problems are denoted by 
+\tNewInfv, \tTotInfv, \tVulv{} and \tTotVulv{}
+respectively.
+
+\medskip
+The next problem considers 
+the time at which the number of new
+infections (among all the nodes of the network)
+reaches a peak (i.e., attains a maximum value).
+
+\medskip
+\noindent
+\textbf{(5)~ Peak Time}~ (\tPeak)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR system $G(V,E)$ along with its initial
+configuration \cali;~ an integer $t \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following event:~
+the largest number of new infections in the network occurs at time $t$.
+
+\medskip
+
+\noindent
+\textbf{Note:}~
+Concise descriptions of
+the problems defined above are shown in Table~\ref{tab:prob_def}.
+
+\medskip
+\begin{table}[tbh]
+\begin{center}
+\begin{tabular}{|p{1.6in}|p{3.9in}|} \hline
+\multicolumn{1}{|c|}{\textbf{Problem Name}} & 
+\multicolumn{1}{|c|}{\textbf{Description}} \\ \hline\hline   
+\tNewInfs{} & {Compute the probability that the number of new infections 
+              within a given subset $S$ of nodes \emph{at} time $t$ 
+           is at least $q$.} \\ \hline
+\tTotInfs{} & {Compute the probability that the total number of 
+              infections within a given subset $S$ of nodes \emph{by} time $t$ is 
+              at least $q$.} \\ \hline
+\tVuls{} & {Compute the probability that \emph{all} the nodes 
+                         in a given subset $S$ get infected 
+                         \emph{at} time $t$.} \\ \hline
+\tTotVuls{}   & {Compute the probability that \emph{all} the nodes 
+                             in a given subset $S$ get infected 
+                             \emph{by} time $t$.} \\ \hline
+\tPeak{}   & {Compute the probability that the number of new infections in the
+              network reaches a peak at time $t$.} \\ \hline\hline
+\end{tabular}
+\end{center}
+\caption{Concise descriptions of the forecasting 
+problems considered in the paper.
+Problems \tVuls{} and \tTotVuls{} are special versions 
+of \tNewInfs{} and \tTotInfs{} respectively with $q = |S|$.
+When $S = V$ (the set of all nodes in the network), we denote
+the first four problems by \tNewInfv, \tTotInfv, \tVulv{} and \tTotVulv{}
+respectively.
+}
+\label{tab:prob_def}
+\end{table}
+
+\subsection{Other Definitions} 
+\label{sse:other_def}
+
+\subsubsection{Some Graph Theoretic Measures and Notation}
+\label{sec:graphdefs}
+
+We now define some graph theoretic measures which will be used
+in subsequent sections;
+additional information regarding these measures can be
+found in \cite{newman_2010}.
+Given an undirected graph $G(V,E)$, the \textbf{length of a path} between two
+nodes $u$ and $v$ is the number of edges in the path.
+The length of a shortest path between $u$ and $v$ will be denoted by
+$d_G(u,v)$; when the graph is clear from the context, we will just denote it by $d(u, v)$.
+The \textbf{diameter} of a graph, denoted by $\delta(G)$, is given by
+\[
+\delta(G) ~=~ \max \{d(u,v) ~:~ u,v \in V\}.
+\]
+For any node $v \in V$, recall that $N_v$ denotes the set of neighbors of $v$
+(i.e., the set of nodes which are adjacent to $v$ in $G$).
+Further, let $G_v(N_v, E_v)$ denote the subgraph of $G$ induced on
+the node set $N_v$.
+The \textbf{clustering coefficient} of $v$, denoted by $CC(v)$, 
+is the ratio of the number of edges in $G_v$ to the maximum possible
+number of edges in $G_v$.
+Thus, the value of $CC(v)$ can be computed using the following expression:
+\[
+CC(v) ~=~ \frac{2|E_v|}{|N_v|(|N_v| - 1)}.
+\]
+As the name implies, the \textbf{mean clustering coefficient} 
+is the average\footnote{
+If $v$ is an isolated node (i.e., has no incident edges), the convention
+is to set $CC(v) = 0$.
+An alternative approach to deal with isolated nodes in
+computing the mean clustering coefficient is presented in \cite{Kaiser-2008}.
+}
+of the clustering coefficients of all the nodes.
+We use $\Delta$ to denote the maximum degree of any node in $G$
+and $\mathcal{P}(s, v, t)$ to
+denote the set of all paths of length $t$ between $s$ and $v$ in $G$.
+
+\subsubsection{Monte Carlo Sampling}
+\label{sss:monte_carlo}
+
+Monte Carlo sampling, a standard approach for approximating the quantities
+considered in this paper, has been applied in a large number of domains
+\cite{hammersley64}.  
+To present the relevant details, assume that we want to estimate
+the mean $\mu_Z$ of a random variable $Z$.
+Let $Z_1$, $Z_2$, $\ldots$, $Z_N$ denote $N$ randomly sampled values of $Z$.
+Further, let $S=Z_1+\ldots+Z_N$.  
+As discussed in \cite{dagum:focs95}, for 
+$N = O((1/\epsilon^2)\ln{(1/\delta}))$, $S/N$ gives an approximation to $\mu_Z$
+with \emph{absolute} error $\epsilon$. 
+In this paper, we focus on 
+obtaining a \emph{relative} approximation, also called an
+$(\epsilon, \delta)$-approximation, for given parameters 
+$\epsilon$, $\delta$  $\in (0,1)$.
+A relative approximation of $\mu_Z$ is an estimate $\widehat{\mu_Z}\:$ such that 
+\[
+\Pr\left[\,|\widehat{\mu_Z}-\mu_Z| \,\geq\, \epsilon\mu_Z\,\right] 
+        ~\leq~ \delta.
+\]
+\noindent
+Unlike the absolute approximation, the running time for
+such a relative approximation is a function of $\mu_Z$ and $\sigma^2_Z$
+(the variance of $Z$). 
+In general, 
+$\mu_Z$ and $\sigma^2_Z$ are not known, so precise running time bounds
+for Monte Carlo methods are challenging to obtain.
+Dagum et al. \cite{dagum:focs95} develop an algorithm that
+determines the number of samples $N$ to obtain an $(\epsilon, \delta)$-approximation,
+such that $N$ is within a constant factor of the optimal. 
+In general, the minimum number of samples need not be 
+polynomially bounded; thus, the algorithm
+of \cite{dagum:focs95} is not guaranteed to run in polynomial time.
+
+
+\subsubsection{Boolean Satisfiability Problems} 
+\label{sss:boolean_sat}
+
+Some known results regarding two forms
+of Boolean satisfiability problems 
+will be used in the subsequent sections of this paper.
+We mention these problems and results below.
+
+\newcommand{\mtsat}{\mbox{\#M2SAT}}
+\newcommand{\dnfsat}{\mbox{\#DNFSAT}}
+
+\medskip
+\noindent
+\textbf{I.~ Number of Satisfying Assignments to Monotone 2SAT}~ (\mtsat)
+
+\medskip
+\noindent
+\underline{Instance:}~ A set $X = \{x_1, x_2, \ldots, x_n\}$ of
+Boolean variables and a collection 
+$C = \{C_1, C_2, \ldots, C_m\}$ clauses,
+where each clause $C_j = (x_a \vee x_b)$ for some variables $x_a$ and
+$x_b$ $\in X$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ Compute the number of assignments 
+to the variables in $X$ that satisfy all the clauses in $C$. 
+
+\medskip
+It is shown in \cite{Vad-2001} that \mtsat{} is \cnump-hard.
+Problems which are \cnump-hard are widely believed to 
+computationally intractable \cite{GJ-1979}.
+Without loss of generality, we will assume throughout this paper
+that any given instance of ~\mtsat{} consists of
+at least two variables and at least two clauses.
+
+\medskip
+The following result which provides an 
+indication of the difficulty of obtaining an approximate solution to the
+\mtsat{} problem is established in \cite{Zu-1996}.
+
+\begin{theorem}\label{thm:m2sat_zuckerman}
+There is an $\epsilon > 0$ such that if the logarithm of the number of satisfying
+assignments to an \mtsat{} instance with $n$ variables can be approximated to within 
+a factor of $O(n^{\epsilon})$ in polynomial time, then \textbf{P} = \cnp. \QED
+\end{theorem}
+
+We will use the above theorem in establishing the difficulty of approximating
+some of the short-term forecasting problems defined above.
+
+\medskip
+In \mtsat, the Boolean formula considered is in 
+Conjunctive Normal Form (CNF); that is, the formula
+has the form $\displaystyle{\bigwedge_{j=1}^m C_j}$, with 
+each clause $C_j$ being a disjunction of literals, $1 \leq j \leq m$. 
+The following problem uses a dual form of Boolean
+functions, namely the Disjunctive Normal Form (DNF).
+
+\medskip
+
+\noindent
+\textbf{II.~ Probability of Satisfying a DNF Boolean Formula}~ (\dnfsat)
+
+\smallskip
+\noindent
+\underline{Instance:}~ A set $X = \{x_1, x_2, \ldots, x_n\}$ of
+Boolean variables, a formula 
+$F = \displaystyle{\bigvee_{i=1}^{m} D_j}$, where each term $D_j$
+is a conjunction of literals formed from the variables in $X$,
+$1 \leq j \leq m$; parameters $p_1$, $p_2$, $\ldots$, $p_n$,
+where  $p_i \in [0,1]$, $1 \leq i \leq n$, such that 
+variable $x_i$ independently takes on the value 1
+with probability $p_i$, $1 \leq i \leq n$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ Compute the probability that the formula $F$ is satisfied.
+
+\medskip
+It is known that \dnfsat{} is \cnump-hard \cite{GJ-1979}.
+For a given instance of \dnfsat, let $p^*$ denote the actual
+probability that the DNF formula $F$ is satisfied.
+For given parameters $\epsilon, \delta\in(0, 1)$, we say that a vale $\hat{p}$
+is an $(\epsilon, \delta)$-\textbf{approximation} of $p^*$, if
+$\Pr\left[\,|\hat{p} - p^*|\geq \epsilon p^*\right] \leq \delta$. 
+Karp et al. \cite{karp:jc85} present the following result
+which will be used later in this paper.
+
+\begin{theorem}\label{thm:num_dnf_prob_approx}
+There is an $(\epsilon, \delta)$-approximation algorithm to~ \dnfsat{} 
+with a running time of\\ $O((1/\epsilon^2)nm^2\log{(1/\delta}))$,
+where $n$ and $m$ denote respectively the number of variables
+and product terms in the DNF formula. \QED
+\end{theorem}
+
+\subsection{A Preliminary Result} 
+\label{sse:prelim}
+
+Here, we state and prove a preliminary result which will be used
+in the subsequent sections of this paper.
+
+\begin{proposition}\label{pro:sir_fixed_point}
+(a) For any SIR system, every pseudo fixed point is a true fixed point.~
+(b) Every SIR system with $n$ nodes reaches a fixed point 
+in at most $n$ time steps.
+\end{proposition}
+
+\noindent
+\textbf{Proof of Part (a):}~ Consider any configuration \calc{} of an SIR
+system.
+If the state of some node $v$ in \calc{} is \istate, then \calc{}
+cannot be a pseudo or true fixed point since the state of $v$ will change 
+to \rstate{} in the next time step.
+Thus, if \calc{} is a pseudo or true fixed point, the state of each
+node in \calc{} must be either \sstate{} or \rstate.
+In such a configuration, no node can change state; 
+that is, \calc{} is a true fixed point.
+
+\smallskip
+\noindent
+\textbf{Proof of Part (b):}~
+From the proof of Part~(a), 
+it can be seen that whenever a configuration $\calc_t$ at time $t$ 
+transitions into 
+a different configuration $\calc_{t+1}$ at time $t+1$, the state 
+of at least one node changes from \istate{} to \rstate. 
+Since the number of nodes in the system is $n$ and nodes 
+reaching state \rstate{} stay in that state forever, 
+the system reaches a configuration with no node in state \istate{} 
+after at most $n$ transitions. 
+Such a configuration is a fixed point. \QED
+
+\subsection{Summary of Contributions}
+\label{sse:results_summary}
+
+We now summarize the main contributions of this paper.
+\begin{enumerate}
+\item For general graphs, we establish computational intractability results for 
+the four problems, namely \tNewInfs,~ \tTotInfs,~ \tVuls{}~ and~ \tTotVuls,
+even when the time horizon $t$ is as small as 2.
+We also prove a result that provides an indication of the difficulty
+of obtaining approximate solutions to any of these problems 
+for any $t \geq 2$. 
+In addition, we observe that our hardness results are tight by showing that the
+four problems are efficiently solvable for $t = 1$.
+Further, we show that the \tPeak{} problem is computationally
+intractable even for $t = 1$. 
+We present a randomized approximation scheme for the problem
+\tTotVuls, for any fixed $t$ and any set $S$ of fixed size.
+We also show that the expected number of new infections at $t = 1$ and
+$t = 2$ can  be computed efficiently. 
+Table~\ref{tab:gen_results} provides statements of
+our results for general graphs.
+
+\item We extend the above intractability results to more
+realistic social networks (e.g. networks with low diameter and
+clustering coefficient and power-law networks) and to networks
+in which all the edges have the same transmission probability.
+Statements of these results appear in Table~\ref{tab:realistic_results}.
+
+\item We further extend our results to prove the intractability 
+of forecasting various epidemic measures introduced in \cite{TC+2016}.
+These results are summarized in Table~\ref{tab:new_measures_results} 
+(Section~\ref{sec:extensions}).
+
+\item We also extend our intractability results to
+three other epidemic models, namely SI, SIS and
+probabilistic threshold.
+These results are summarized in Table~\ref{tab:results_for_models} 
+(Section~\ref{sec:extensions}).
+\end{enumerate}
+In a companion paper \cite{Rosenkrantz_etal_2016}, we have shown that
+many of the forecasting problems under the SIR model can be solved efficiently
+when the treewidth \cite{Bod93} of the underlying graph is bounded. 
+
+\medskip
+
+\begin{table}[tbh]
+%%\begin{table}
+\begin{center}
+\begin{tabular}{|p{1.6in}|p{4.15in}|} \hline
+\multicolumn{1}{|c|}{\textbf{Problem(s)}} & 
+\multicolumn{1}{|c|}{\textbf{Result(s)}} \\ \hline\hline   
+{\tNewInfs,\newline
+\tTotInfs,\newline 
+\tVuls{}~and \newline
+\tTotVuls{}}
+              & {(a) \cnump-hard for any~ $t \geq 2$ ~(Part~(1) of 
+                     Theorem~\ref{thm:gen_hardness}). 
+
+                \smallskip
+                (b) For any $t \geq 2$, there is an $\epsilon > 0$ such
+                     that unless \textbf{P} = \cnp, the quantity 
+                     $\log{(2^n\,p^*)}$ cannot be efficiently approximated to
+                     within the factor $n^{\epsilon}$, where $p^*$ is the solution
+                     value and $n$ is the maximum number of nodes that can
+                     get infected at $t = 1$. (Part~(2) of \newline  
+                     Theorem~\ref{thm:gen_hardness}). %\newline
+               } \\ \hline
+{\tPeak{}}  & {\cnump-hard for  any $t \geq 1$~ (Part~(3) of
+               Theorem~\ref{thm:gen_hardness}).
+              } \\ \hline\hline
+{\tNewInfs,\newline
+ \tTotInfs, \newline
+\tVuls{}~and \newline
+\tTotVuls{}}
+            & {Efficiently solvable for~ $t = 1$~
+                     (Part~(1) of Corollary~\ref{cor:gen_easy_time_1}).} \\ \hline
+{Compute the expected number of new infections at time $t$}              
+            & {Efficiently solvable for~ $t = 1$~ and~ $t = 2$~
+                     (Corollary~\ref{cor:expected_number_infected_time_2}).} \\ \hline
+{{\tTotVuls{}} and \newline
+{\tTotInfs{}}}  & {Randomized approximation scheme for 
+                 any fixed $t$ and any set $S$ of fixed size~ 
+                 (Section~\ref{sec:poly_versions}).
+                 %(Theorems \ref{thm:tvuldnf} and \ref{thm:totinfdnf}).
+              } \\ \hline\hline
+\end{tabular}
+\end{center}
+\caption{Results for forecasting problems over general graphs\bigskip} 
+\label{tab:gen_results}
+\end{table}
+
+\begin{table}[tbh]
+%%\begin{table}
+\begin{center}
+\begin{tabular}{|p{1.6in}|p{3.9in}|} \hline
+\multicolumn{1}{|c|}{\textbf{Problem}} & 
+\multicolumn{1}{|c|}{\textbf{Result(s)}} \\ \hline\hline   
+{\TwoNewInfv{}} & {\cnump-hard even when both the diameter 
+                      and the average clustering coefficient are 1
+                       (Part~(1) of Theorem~\ref{thm:dia_cc}).
+                 } \\ \hline
+{\TwoTotInfv{}} & {\cnump-hard even when both the diameter 
+                       and the average clustering coefficient are 1
+                       (Part~(2) of Theorem~\ref{thm:dia_cc}).
+                 } \\ \hline
+{\tNewInfv{}}   & {(a)  \cnump-hard for any $t \geq 2$ 
+                      even when all edge probability values \newline
+                      are less than 1 ~(Part~(1) of 
+                      Theorem~\ref{thm:gen_hardness_prob_not_one}). \newline
+                  (b)  \cnump-hard for any $t \geq 3$ even when 
+                       all edge probability values \newline
+                       are equal to $0.5$~
+                       (Theorem~\ref{thm:gen_hardness_prob_half}). \newline
+                  (c)  \cnump-hard for any $t \geq 2$ even 
+                       for power-law graphs \newline 
+                       (Theorem~\ref{thm:hardness_power_law}).
+                 } \\ \hline
+{\tTotInfv{}}   & {(a)  \cnump-hard for any $t \geq 2$ 
+                       even when all edge probability values \newline
+                       are less than 1 ~(Part~(2) of
+                       Theorem~\ref{thm:gen_hardness_prob_not_one}). \newline
+                  (b) \cnump-hard for any $t \geq 3$ even when 
+                      all edge probability values \newline 
+                      are equal to $0.5$~
+                      (Theorem~\ref{thm:gen_hardness_prob_half}).
+                 } \\ \hline\hline
+\end{tabular}
+\end{center}
+\caption{Extensions of intractability results to more realistic networks}
+\label{tab:realistic_results}
+\end{table}
+
+
+\subsection{Related Work}
+\label{sse:related_work}
+
+Several researchers have studied the dynamics of various diseases
+under the SIR model 
+(see e.g. \cite{marathe:cacm13,Britton-2009,BB+2009,Brauer-2008,
+Salathe-Jones-2010,Ferrari-etal-2006} and the references cited therein).
+Only a limited amount of work has been reported on
+the computational complexity of problems that arise 
+in the context of SIR disease dynamics. 
+To our knowledge, we are the first to address complexity issues concerning
+the short-term forecasting problems under the SIR model.
+In contrast to our work (where the focus
+is on short-term events), all of the known complexity results are for the case
+when the epidemic has run its course and the network has reached a fixed point. 
+We now summarize the known results.
+When $t$ is not fixed,
+Shapiro and Delgado-Eckert \cite{SD-2012} point out that the 
+\cnp-hardness of the \tVuls{} problem follows from its direct relationship to
+the two-terminal reliability problem for networks \cite{Ball-1980,Colbourn-1987},
+even when the set $S$ consists of just a single node.
+Several groups of researchers \cite{SD-2012,PS-2012,LZ-2009} 
+have observed that computing the expected number of infections 
+under the SIR model is computationally intractable.
+Laumanns and Zenklusen \cite{LZ-2009} present two additional results.
+They show that there is an efficient randomized approximation scheme 
+for the problem of computing the expected number of infections.
+They also show that even obtaining a constant factor approximation for the 
+probability of a large number of infections (i.e., an infection size 
+$\geq \alpha n$, where $\alpha < 1$ is a constant and $n$ is the number
+of nodes in the graph) is computationally intractable.
+Peyrard and Sabbadin \cite{PS-2012} consider a version where there is a
+nonnegative cost associated with each node and the goal is to compute
+the expected infection cost. 
+They give a divide-and-conquer algorithm for the problem and compare its
+performance experimentally with an approximation algorithm based 
+on Monte Carlo simulations.
+
+\medskip
+For the sake of completeness, we briefly discuss papers that 
+address forecasting problems in other contexts.
+Empirical methods to forecast civil unrests
+and other population-related events based on social media data are discussed in 
+\cite{Korkmaz_etal_2016,Muthaiah_etal_2016}.
+Cheng et al. \cite{Cheng_etal_2014} study the problem
+of predicting the sizes of cascades in social networks such as Facebook and Twitter.
+Martin et al. \cite{Martin_etal_2016} attribute the difficulty 
+of predicting behaviors of complex social networks two factors, namely
+the insufficiency of data or models and the unpredictability of
+complex social systems.
+These observations are consistent with those made by 
+Drake \cite{Drake-2005,Drake-2006} in the context of 
+epidemiological models.
+Krishnan et al. \cite{Krishnan_etal_2016} consider information
+propagation in networks where initially two or more nodes in the
+network  have the information.
+Using a large Twitter data set, 
+they present a comprehensive set of experimental results
+for predicting the size and shape of the forest created
+by the diffusion process.
+

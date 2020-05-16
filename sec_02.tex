@@ -1,0 +1,199 @@
+\section{SIR Systems as Stochastic Dynamical Systems}
+\label{sec:sir_dyn_system}
+
+A general model for \emph{stochastic}
+synchronous dynamical systems (SSyDSs) was introduced in \cite{BH+2011}.
+In this section, we point out that SIR systems are a special form of SSyDSs.
+Each SSyDS \cals{} has three components, namely a domain \cald{}
+(i.e., a finite set of permissible state values),
+an underlying graph $G(V,E)$ with $n$ nodes and 
+a collection ${\cal F} = \{f_1, f_2, \ldots, f_n\}$ of functions,
+where $f_i$ is the \textbf{local transition function}
+associated with node $v_i \in V$,
+$1 \leq i \leq n$.
+In the context of SIR systems, the domain \cald{} is
+is the set \{\sstate, \istate, \rstate\}.
+Some additional terminology is needed to specify
+the local transition functions for SIR systems. 
+For any node $v \in V$, the \textbf{neighborhood} of $v$, denoted
+by $N_v$, contains each node $u$ such that the edge $\{u,v\}$ is in $E$. 
+Each edge $e = \{u,v\} \in E$ is associated with a 
+\textbf{transmission probability} $p_e$. 
+A {\bf configuration} of an SIR system at time $t$ is an $n$-vector   
+$(b_1^t, b_2^t, \ldots, b_n^t)$,  
+where $b_i^t \in \cald$ is the value of the state of 
+node $v_i$ at time $t$, $1 \leq i \leq n$.  
+
+A single transition of an SIR system from one configuration to another is   
+obtained by updating the state of each node $v_i$ \emph{synchronously}
+using the corresponding local transition function $f_i$ whose 
+specification is as follows.
+\begin{description}
+\item{(a)} If the state of $v_i$ at time $t$ is \rstate, then
+the state of $v_i$ at time $t+1$ is also \rstate.
+(Thus, once a node reaches the state \rstate, it remains
+in that state forever.)
+
+\item{(b)} If the state of $v_i$ at time $t$ is \istate, then
+the state of $v_i$ at time $t+1$ is \rstate.
+(Thus, each node remains in state \istate{} for exactly one 
+time unit.)
+
+\item{(c)} If the state of $v_i$ at time $t$ is \sstate, then 
+the state of $v_i$ at time $t+1$ is determined by the following 
+stochastic process.
+Let $X_i(t) \subseteq N_{v_i}$ denote the set of neighbors of 
+$v_i$ whose state is \istate{} at time $t$, and
+let $\pi(i,t)$ be defined as follows. 
+\begin{center}
+\begin{tabular}{lcll} 
+$\pi(i,t)$  & = & 0 & \textrm{if}~ $X_i(t) ~=~ \emptyset$ \\ 
+            & = & $1 - \displaystyle{\prod_{u \in X_i(t)} 
+                         (1 - p_{\{u,v_i\}}})$ &
+                \textrm{otherwise.} 
+\end{tabular}
+\end{center}
+The state of $v_i$ at time $t+1$ is \istate{} 
+with probability $\pi(i,t)$ and \sstate{} with probability $1 - \pi(i,t)$.
+\end{description}
+
+\noindent
+\textbf{Explanation for the Equation for $\pi(i,t)$:}~
+If $X_i(t) = \emptyset$, none of $v_i$'s neighbors 
+can infect $v_i$ at time $t$. 
+Thus, $v_i$ remains in state \sstate{} at time $t+1$.
+Otherwise, at time $t$, each node $u \in X_i(t)$ 
+tries to infect $v_i$, \emph{independently} of the other nodes in $X_i(t)$,
+with probability $p_{\{u,v_i\}}$, the transmission probability of
+the edge $\{u,v_i\}$.
+The expression for $\pi(i,t)$ shown above
+gives the probability that at least one of 
+these attempts is successful.
+
+\medskip
+Initially (i.e., at $t = 0$), one or more nodes are in state \istate{}
+and the other nodes are in state \sstate.
+Starting from the given initial configuration $\calc_0$, the system
+goes through a sequence of configurations over time.
+If the configuration at time $t$ is $\calc_t$, the next configuration
+$\calc_{t+1}$ is called a \textbf{successor} of $\calc_t$.
+Since the system is stochastic, there may be more than one successor
+for a given configuration.
+For a general SSyDS, one of the successors of a configuration \calc{}
+may be \calc{} itself.
+Such a configuration is called a \textbf{pseudo fixed point}.
+In addition, an SSyDS may also have a configuration \calc{} such that
+the only successor of \calc{} is \calc{} itself; such a configuration
+is called a \textbf{true fixed point}.
+As we observe in Section~\ref{sse:prelim}, for any SIR system,
+every pseudo fixed point is a true fixed point. 
+%% Any configuration \calc{} which is its own successor is
+%% called a \textbf{fixed point}. 
+
+\medskip
+We say that an SIR system is \textbf{uniform} if all the edges in
+the underlying graph have the same transmission probability $p$.
+Also, we say that a node $v$ \textbf{gets infected} 
+during an execution of an SIR system 
+if the state of $v$ changes to \istate{} at
+some time during the execution.
+The \textbf{vulnerability} of a node $v$
+is the probability that $v$ gets infected during 
+a run of the SIR system \cite{EK+2005}.
+%%a run of the SIR system \cite{EK+2005}.
+
+\begin{figure}[tbh]
+\rule{\textwidth}{0.01in}
+\begin{minipage}[t]{0.5\textwidth}
+%%\vspace*{0.2in}
+\medskip
+%%\mbox{
+\begin{center}
+\input{sir_example.pdf_t}
+\end{center}
+%%}
+\medskip
+\end{minipage}
+%% \hspace*{0.1in}
+\hfill
+\begin{minipage}[t]{0.5\textwidth}
+\vspace*{0.3in}
+\begin{center}
+\begin{tabular}{|c|l|}\hline
+\textbf{Time} & \textbf{Configuration} \\ \hline\hline
+0 & $(\istate, \sstate, \sstate, \sstate, \sstate, \sstate, \sstate)$ \\ \hline 
+1 & $(\rstate, \istate, \istate, \sstate, \sstate, \sstate, \sstate)$ \\ \hline 
+2 & $(\rstate, \rstate, \rstate, \sstate, \istate, \sstate, \istate)$ \\ \hline 
+3 & $(\rstate, \rstate, \rstate, \istate, \rstate, \sstate, \rstate)$ \\ \hline 
+4 & $(\rstate, \rstate, \rstate, \rstate, \rstate, \sstate, \rstate)$ \\ \hline 
+\end{tabular}
+\end{center}
+\medskip
+\end{minipage}
+\caption{The graph of an SIR system and one possible sequence of its
+configurations, leading to a fixed point at time $t = 4$. 
+(Each configuration is a 7-tuple $(s_0, s_1, s_2, s_3, s_4, s_5, s_6)$,
+where $s_i \in$ \{\sstate, \istate, \rstate\} is the
+state of node $v_i$, $0 \leq i \leq 6$.)
+}
+\label{fig:sir_example}
+\smallskip
+\rule{\textwidth}{0.01in}
+\end{figure}
+
+\begin{example} \label{ex:sir_example}
+%%\noindent
+%%\textbf{Example 2.1:}~
+The graph of an SIR system consisting of seven 
+nodes is shown in Figure~\ref{fig:sir_example}.
+The nodes are labeled $v_0$ through $v_6$ and the transmission
+probability of each edge is also shown.
+Suppose at $t = 0$, node $v_0$ is in state \istate{} and all
+other nodes are in state \sstate. 
+Starting from this initial configuration, one possible sequence of 
+configurations that the system may
+go through before reaching a fixed point at time $t = 4$ is shown
+in the table in the figure.
+
+As shown in that table, at $t = 1$, nodes $v_1$ and $v_2$ get infected,
+$v_0$ changes to state \rstate{} and other nodes remain in state \sstate.
+Further, at $t = 2$, nodes $v_4$ and $v_6$ get infected,
+$v_1$ and $v_2$ change to state \rstate{} and nodes $v_3$ and $v_5$
+remain in state \sstate.
+Given the configuration at time $t = 1$, the probability that $v_4$
+gets infected at time $t = 2$ can be computed as follows.
+The infected neighbors of $v_4$ are $v_1$ and $v_2$, and the
+transmission probabilities of the edges $\{v_1, v_4\}$ and $\{v_2, v_4\}$
+are $3/4$ and $1/2$ respectively.
+Thus, the probability that $v_4$ gets infected at time $t = 2$ is
+given by $1 - (1-3/4)(1-1/2)$ = $1 - 1/8$ = $7/8$.
+In a similar manner, the probability that node $v_6$ gets infected
+at $t = 2$ is $1 - (1-1/2)$ = $1/2$.
+
+We note that at $t = 3$, node $v_6$ (which was infected at $t = 2$)
+causes $v_3$ to get infected.
+At $t = 4$, the system reaches a fixed point with node $v_5$ in
+state \sstate{} and all other nodes in state \rstate. \hfill $\Box$
+\end{example}
+
+\medskip
+Following \cite{BH+2011},
+the \textbf{generalized phase space} ${\cal P}_{\cal S}$
+of an SIR system ${\cal S}$ is a directed graph defined as follows.
+There is a node in ${\cal P}_{\cal S}$ for
+each configuration of \cals.
+There is a directed edge
+from the node representing configuration $\calc_1$ to that representing
+configuration $\calc_2$ if the probability that the system will reach
+$\calc_2$ from $\calc_1$ in one step is (strictly) greater than zero.
+In ${\cal P}_{\cal S}$, the directed edge from $\calc_1$ to $\calc_2$
+is associated with a positive number $p$, $0 < p \leq 1$,
+representing the probability of the corresponding 1-step transition.
+Thus, the generalized phase
+space represents the \textbf{Markov chain} \cite{MU-2005}
+for the SIR system.
+For an SIR system with $n$ nodes over the 
+domain \{\sstate, \istate, \rstate\},
+the number of possible configurations is $3^n$.
+Thus, the size of the Markov chain of an SIR system
+is \emph{exponential} in the size of the system's representation.

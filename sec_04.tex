@@ -1,0 +1,549 @@
+%% \section{Computational Intractability Results for Forecasting 
+%% Problems Over a Collection of Configurations}
+\section{Computational Intractability Results for 
+General Networks}
+\label{sec:general_results}
+
+%\newcommand{\cali}{\mbox{${\cal I}$}}  
+
+%%\newcommand{\ThrTotInf}{\mbox{$3$}-\textsc{TotInf}}
+
+\subsection{Overview}
+\label{sse:results_overview}
+
+In this section, we show that the forecasting problems 
+defined in Section~\ref{sse:prob_formulation} are computationally
+intractable in general even for small values of $t$.
+We start with a result (Theorem~\ref{thm:gen_hardness}) 
+to convey how a known computationally intractable problem (namely, \mtsat)
+can be reduced to forecasting problems under the SIR model.
+%% We also demonstrate that this basic result is tight by showing that 
+%% the version of forecasting problems which are \cnump-hard{}
+%% for $t = 2$ are efficiently solvable for $t = 1$. 
+In Section~\ref{sec:realistic},
+we show how these hardness results can be extended 
+to restricted classes of graphs 
+(such as graphs with low diameter or high average 
+clustering coefficient and power law graphs).
+
+\subsection{Results for General Graphs}
+\label{sse:gen__results}
+
+\begin{theorem}\label{thm:gen_hardness} \leavevmode
+\begin{description}
+\item{(1)} For any $t \geq 2$,~ the problems~ \tNewInfs,~ \tTotInfs,~ \tVuls{} 
+and~ \tTotVuls{} are~ \cnump-hard. 
+
+\item{(2)}
+Unless \textbf{P} = \cnp, 
+for each of the problems \tNewInfs, \tTotInfs, \tVuls{} and
+\tTotVuls{} and for any $t \geq 2$,
+there is a constant $\epsilon > 0$
+such that if $p^*$ is the actual solution value,
+the quantity $\log{(2^n\,p^*)}$ cannot be approximated to within the factor
+$O(n^{\epsilon})$ in polynomial time, where $n$
+is the maximum number of nodes that can get infected at time $t-1$. 
+
+\item{(3)} Problem~ \tPeak{} is~ \cnump-hard ~for any $t \geq 1$.
+\end{description}
+\end{theorem}
+
+
+%% \medskip
+\noindent
+\textbf{Proof:}~ 
+
+\noindent
+\textbf{Proof of (1):} We first provide a single reduction that establishes the
+\cnump-hardness of all the four problems for $t = 2$.
+We then show how the reduction can be modified to obtain the results 
+for any $t \geq 3$.
+
+\medskip
+We begin by establishing the hardness results for $t = 2$. 
+The reduction is from the \mtsat{} problem defined in 
+Section~\ref{sss:boolean_sat}.
+Let the given instance of \mtsat{} consist of the
+set $X = \{x_1, x_2, \ldots, x_n\}$ of $n$ Boolean variables and
+set $C = \{C_1, C_2, \ldots, C_m\}$ of $m$ clauses, 
+where each clause $C_j = (x_a \vee x_b)$ for some variables $x_a$ and
+$x_b$ $\in X$.
+The graph $G(V,E)$ and the other components of the \TwoNewInfs{} 
+problem instance are constructed as follows.
+\begin{description}
+\item{(a)} The node set $V$ consists of three pairwise disjoint subsets
+$V_0$, $V_1$ and $V_2$.
+Node set $V_0 = \{s\}$ contains just one node.
+Node set $V_1 = \{v_1, v_2, \ldots, v_n\}$ contains $n$ nodes, 
+with node $v_i$ corresponding to Boolean variable $x_i$, $1 \leq i \leq n$. 
+We refer to these nodes as {\bf variable nodes}.
+Node set $V_2 = \{w_1, w_2, \ldots, w_m\}$ contains $m$ nodes, 
+with node $w_j$ corresponding to clause $C_j$, $1 \leq j \leq m$. 
+We refer to these nodes as {\bf clause nodes}.
+Thus, $|V| ~=~ m+n+1$.
+%% Node set $V_2$ is partitioned into $m$ subsets $W_1$, $W_2$, \ldots $W_m$,
+%% where subset $W_j = \{w_j^1, w_j^2, \ldots, w_j^{n+1}\}$ 
+%% corresponds to clause $C_j$ and contains $n+1$ nodes, $1 \leq j \leq m$.
+%% (Thus, $V$ has a total of $(m+1)(n+1)$ nodes.)
+
+\item{(b)} The edge set $E$ consists of two disjoint sets $E_1$ and $E_2$.
+Here, $E_1 = \{\{s, v_i\}: 1 \leq i \leq n\}$.
+For clause $C_j = (x_a \vee x_b)$ of the \mtsat{} instance,
+$E_2$ has the two edges $\{v_a, w_j\}$ and
+$\{v_b, w_j\}$, $1 \leq j \leq m$.
+%% $\{v_b, w^r_j\}$, $1 \leq r \leq n+1$ and $1 \leq j \leq m$.
+Thus, $|E| ~=~ n+2m$. 
+
+\item{(c)} 
+%% The transmission probabilities on the edges are
+%% chosen as follows.
+For each edge in $E_1$, the transmission probability is set to $1/2$;~ 
+for each edge in $E_2$, the transmission probability is set to $1$. 
+
+\item{(d)} Initially, node $s$ is in state \istate{} and all
+other nodes are in state \sstate.
+
+\item{(e)} For all the four problems, $V_2$ serves 
+as the set $S$. 
+For the \TwoNewInfs{} and \\
+\TwoTotInfs{} problems, the quantity $q$ in specifying 
+event \cale{} is given by $q = |V_2| = m$.
+\end{description}
+
+\begin{figure}[tbh]
+\rule{\textwidth}{0.01in}
+%%\vspace*{0.2in}
+\smallskip
+\noindent
+Boolean variable set $X = \{x_1, x_2, x_3\}$.
+
+\smallskip
+Clause set $C = \{(x_1 \vee x_2),~ (x_1 \vee x_3),~ (x_2 \vee x_3)\}$.
+
+\medskip
+%%\mbox{
+\begin{center}
+\input{tnew_inf_reduction.pdf_t}
+\end{center}
+%%}
+\caption{An example for the reduction presented in
+the proof of Part~(1) of Theorem~\ref{thm:gen_hardness}.
+Parts (a) and (b) of the figure show the resulting
+graphs of the SIR system for $t = 2$ and $t = 4$ respectively.
+}
+\label{fig:tnewinf_proof}
+\smallskip
+\rule{\textwidth}{0.01in}
+\end{figure}
+
+This completes the construction and 
+it can be seen the construction can be carried out in polynomial time.
+For problem \TwoNewInfs{} 
+the goal is to compute the probability of the following event \cale:
+the number of new infections at $t = 2$ is at least $m = |S|$.  
+For problem \TwoTotInfs{} 
+the goal is to compute the probability of the following event \cale':
+the total number of infections by $t = 2$ is at least $m = |S|$.  
+Since our reduction sets $m = |S|$, these two problems also correspond to 
+\TwoVuls{} and \TwoTotVuls{} respectively.
+
+\medskip
+An example of this construction is shown in
+Figure~\ref{fig:tnewinf_proof}(a).
+We first prove the correctness of the reduction for the \TwoNewInfs{}
+problem.
+The proof for \TwoTotInfs{} follows from this result
+via simple observations.
+
+\medskip
+\noindent
+\textbf{Correctness of the reduction for}~ \TwoNewInfs:~
+We start with the following claim.
+
+\medskip
+\noindent
+\textbf{Claim 1:}~ Let \cale{} denote the event that at least 
+$m$ nodes of $V_2$ get infected at $t = 2$.
+Further, let $N$ denote the number of satisfying assignments 
+to the \mtsat{} instance.
+The probability that the event \cale{} is equal to $N/2^n$.
+
+\noindent
+\textbf{Proof of Claim 1:}~ By our construction, only nodes in $V_1$
+can get infected at time $t = 1$.
+Further, since each node stays in state \istate{} for only one time
+unit, only nodes in $V_2$ may get infected at time $t = 2$.
+Since \cale{} requires at least $m$ new infections at time $t = 2$
+and $V_2$ contains exactly $m$ nodes, event \cale{} is the same
+as the event that all nodes in $V_2$ get infected at $t = 2$.
+
+Call any subset of $V_1$ an \textbf{infection pattern}.
+Since $V_1$ is in one-to-one correspondence with the 
+Boolean variable set $X$, there is a
+simple one-to-one correspondence between
+the set of assignments to the variables in $X$
+and the set of infection patterns of $V_1$: 
+each infection pattern $P \subseteq V_1$ corresponds to the truth
+assignment that sets the variables corresponding to the nodes in $P$
+to \texttt{True} and the remaining variables to \texttt{False}. 
+Since the transmission probability of each edge in $E_1$ is $1/2$,
+the probability of each infection pattern is $1/2^n$. 
+
+We now argue that each infection pattern corresponding to a satisfying
+assignment for the \mtsat{} instance causes all nodes in $V_2$
+to get infected at time $t = 2$, and that
+each infection pattern corresponding to a non-satisfying
+assignment for the \mtsat{} instance causes a \emph{proper} subset of 
+$V_2$ to get infected at time $t = 2$.
+The proof is in two parts.
+
+\noindent
+\underline{Part 1.1:}~
+Consider any infection pattern that corresponds to a
+satisfying assignment.
+Since the assignment satisfies all clauses, at time $t = 2$,
+each node $w_j \in V_2$ has at least one edge to a node 
+in state \istate{} in $V_1$.
+Further, since all the transition probabilities for the edges in $E_2$ are 1,
+each node $w_j \in V_2$ gets infected at $t = 2$. 
+
+\noindent
+\underline{Part 1.2:}~
+Consider any infection pattern that corresponds to a
+non-satisfying assignment.
+Then, there is at least one clause $C_j$ that is not satisfied.
+The corresponding node $w_j$ has two neighbors, say $v_a$ and $v_b$,
+in $V_1$, and both $v_a$ and $v_b$ are in state \sstate{} at the 
+end of time step $t = 1$.
+Therefore, $w_j \in V_2$ cannot be infected at time $t = 2$.
+In other words, only a proper subset of $V_2$ get infected at $t = 2$.
+
+Therefore, the probability of the event \cale{} is the same as
+the probability that an assignment chosen uniformly randomly from
+the set of all assignments satisfies all the clauses of the given
+\mtsat{} instance.
+Since the latter probability is $N/2^n$, Claim~1 follows. 
+
+In view of Claim~1, if the probability of event \cale{} can be computed 
+efficiently, then $N$, the number of satisfying assignments
+of the given \mtsat{} instance can also be computed efficiently. 
+This establishes the \cnump-hardness of \TwoNewInfs.
+
+
+\medskip
+\noindent
+\textbf{Correctness of the reduction for}~ \TwoTotInfs:~
+First consider the case where $t = 2$.
+We note that in graph $G$, the earliest time at which any node in 
+$V_2$ can get infected is $t = 2$.
+Therefore, the probability that all $m$ nodes in $V_2$ get infected
+\emph{by} time $t = 2$ is equal to the probability that they get infected
+at time $t = 2$.
+This shows the \cnump-hardness of \tTotInfs{} for $t = 2$.
+The construction for any $t \geq 3$ is identical to that presented for
+the \tNewInfs{} problem above.
+
+\medskip
+\noindent
+\textbf{Correctness of the reduction for}~ \TwoVuls:~
+Since set $S = V_2$, the solution value for \tVuls{} 
+is the same as that for \tNewInfs.
+Thus, the \cnump-hardness of \tVuls{} for any $t \geq 2$ 
+follows from the above result for \tNewInfs.
+
+\medskip
+\noindent
+\textbf{Correctness of the reduction for}~ \TwoTotVuls:~
+Since set $S = V_2$, the solution value for \tTotVuls{} 
+is the same as that for \tTotInfs.
+Thus, the \cnump-hardness of \tTotVuls{} for any $t \geq 2$ 
+follows from the above result for \tTotInfs.
+
+\medskip
+\noindent
+\textbf{Extension of the results for any}~ $t \geq 3$:~
+The \cnump-hardness of \tNewInfs{} for any $t \geq 3$ can be 
+proven through a simple modification to the above construction.
+The graph $G(V,E)$ constructed above is
+augmented as follows.
+Given an integer $t \geq 3$, we construct a simple path 
+$\langle s_0, s_1, \ldots, s_{t-3}\rangle$
+consisting of $t-2$ new nodes and add an edge from $s_{t-3}$ to $s$.
+The transmission probability for all the new edges is set to 1.
+At time 0, node $s_0$ is in state \istate{} and all 
+other nodes are in state \sstate. 
+(An example of this construction for $t = 4$ is shown in
+Figure~\ref{fig:tnewinf_proof}(b).)
+The new nodes and edges added to $G$ ensure that 
+node $s$ gets infected at time $t-2$.
+The requirement is to compute the probability that at least $m$
+nodes in $V_2$ get infected at time $t$.  
+It can be verified that the probability of this event is the
+same as the probability that an assignment chosen uniformly
+randomly satisfies all the clauses of the \mtsat{} instance.
+It can be seen that the construction also establishes
+the \cnump-hardness of \tTotInfs{} for any $t \geq 3$.
+Since the instances resulting from these constructions 
+actually correspond to \TwoVuls{} and \TwoTotVuls,
+we also obtain \cnump-hardness of those two problems 
+for any $t \geq 3$.
+
+\medskip
+This completes the proof of Part~(1).
+
+\medskip
+\noindent
+\textbf{Proof of Part (2):}~ 
+We use the same reduction from \mtsat{} given in Part~(1).
+For any of the four problems, let $p^*$ denote the actual solution
+value.
+As shown in the proof of Part~(1), $p^* = N/2^n$, where $n$ and $N$
+denote respectively the number of variables in and the number of satisfying
+assignments of the given \mtsat{} instance.
+Thus, $N = 2^n\,p^*$.
+By Theorem~\ref{thm:m2sat_zuckerman}, there is an $\epsilon > 0$ such that
+$N = 2^n\,p^*$ cannot be approximated to within the factor 
+$O(n^{\epsilon})$ in polynomial time, unless \textbf{P} = \cnp.
+In our transformation, $n = |V_1|$, the maximum number of nodes that 
+can be infected at time $t-1$.
+The last two statements together imply the result of Part~(2). 
+
+\medskip
+\noindent
+\textbf{Proof of Part (3):}~ We first show that \OnePeak{} is
+\cnump-hard. 
+This is done by modifying the construction presented in
+the proof of Part~(1) above as follows.
+
+\begin{description}
+\item{(a)} Node set $V_0$ is unchanged.
+Node set $V_1$ is partitioned into two sets $V_{11}$ and $V_{12}$,
+where $V_{11} = \{y_1, y_2, \ldots, y_r\}$
+consists of $r = m(n+2)-n-1$ nodes and $V_{12} = \{v_1, v_2, \ldots v_n\}$
+consists of $n$ nodes. 
+($V_{12}$ is in one-to-one correspondence
+with the set $X$ of Boolean variables of the~ \mtsat{} instance.) 
+Also, $V_2$ is partitioned into $m$ subsets $W_1$, $W_2$, \ldots $W_m$,
+where subset $W_j = \{w_j^1, w_j^2, \ldots, w_j^{n+2}\}$ 
+corresponds to clause $C_j$ and contains $n+2$ nodes, $1 \leq j \leq m$.
+Thus,  $|V| = 2m(n+2)$. 
+
+\item{(b)} The edge set $E$ consists of three disjoint sets 
+$E_1$, $E_2$ and $E_3$.
+Here, $E_1 = \{\{s, v_i\}: 1 \leq i \leq n\}$ and
+$E_2 = \{\{s, y_i\}: 1 \leq i \leq r\}$.
+For each clause $C_j = (x_a \vee x_b)$ of the~ \mtsat{} instance
+($1 \leq j \leq m$),
+$E_3$ has the $2(n+2)$ edges $\{v_a, w_j^{\ell}\}$ and
+$\{v_b, w_j^{\ell}\}$, $1 \leq \ell \leq n+2$. 
+Thus, $|E| ~=~ 3m(n+2)-1$. 
+
+\item{(c)} 
+For each edge in $E_1$, the transmission probability is set to $1/2$; 
+for each edge in $E_2 \cup E_3$, 
+the transmission probability is set to $1$. 
+
+\item{(d)} Initially, node $s$ is in state \istate{} and all
+other nodes are in state \sstate.
+
+\item{(e)} The event \cale{} ~whose probability is to be
+computed is the following: the peak infection occurs at $t = 1$. 
+\end{description}
+In the following, we refer to any subset of $V_{12}$
+as an \textbf{infection pattern}.
+To specify an equation for the probability of event \cale,
+we need the following claim. 
+
+\medskip
+\noindent
+\textbf{Claim 2:}~ In the instance of the \OnePeak{} problem
+constructed above, the peak occurs at either $t = 1$ or $t = 2$. 
+
+\noindent
+\textbf{Proof of Claim 2:}~ We first observe that at $t = 0$, only
+one node (namely, $s$) is infected.
+Further, at $t = 1$, all
+the $r = m(n+2)-n-1$ nodes in $V_{11}$ get infected.
+Using our assumption that $m \geq 2$ and $n \geq 2$,
+it can be seen that $r \geq 5$. 
+Thus, the peak cannot occur at $t = 0$.
+To show that a peak cannot occur at values of $t > 0$,
+except possibly for $t = 1$ or $t = 2$, 
+we have two cases to consider. 
+
+\noindent
+\underline{Case 2.1:}~ Integer $t$ is \emph{odd}. 
+
+Since we are excluding $t = 1$, $t$ is odd and $t \geq 3$.
+For any such value of $t$, it can be seen from our construction
+that new infections may occur only among the nodes in $V_{12}$. 
+Note that $|V_{12}| = n$ and $r = m(n+2)-n-1 > n$ (since $m \geq 2$). 
+Now, since at least $r > n$ new infections occur at $t = 1$, 
+a peak cannot occur at any odd value of $t \geq 3$.
+
+\noindent
+\underline{Case 2.2:}~ Integer $t$ is \emph{even}. 
+
+Since we are excluding $t = 0$ and $t = 2$, 
+$t$ is even and $t \geq 4$.
+For any such value of $t$, it can be seen from our construction
+that new infections may occur only among the nodes in $V_2$. 
+To show that the number of new infections in $V_2$ cannot 
+be a peak for even values of $t \geq 4$, 
+we consider the following two subcases.    
+
+\noindent
+\underline{Subcase 2.2.1:}~ The infection pattern at $t = 1$ 
+is the empty set.
+
+In this case, at $t = 2$, no new infections occur; 
+that is, the system reaches a fixed point at $t = 2$. 
+In other words, the number of new infections at all even values 
+of $t \geq 2$ is 0.
+Consequently, a peak cannot occur at even values of $t \geq 4$.  
+
+\noindent
+\underline{Subcase 2.2.2:}~ The infection pattern at $t = 1$ 
+is non-empty.
+
+Suppose node $v_i \in V_{12}$ is infected at $t = 1$. 
+The Boolean variable $x_i$ corresponding to $v_i$ occurs
+in at least one clause $C_j$ of the \mtsat{} instance.
+In other words, for this case, the number of new infections at $t = 2$ is
+at least $|W_j| = n+2$.
+Therefore, the number of new infections that can occur 
+for any even value of $t \geq 4$ is at most 
+$|V_2| - (n+2)$ = $(m-1)(n+2)$ 
+which can be seen to be less than $r = m(n+2)-n-1$.
+Since at least $r$ new infections occur at $t = 1$, a peak cannot
+occur at even values of $t \geq 4$.
+This completes the proof of Case~3.2 and also that of Claim~3.
+
+\medskip
+\noindent
+\textbf{Claim 3:}~
+Let $N$ denote the number of satisfying assignments 
+to the~ \mtsat{} instance.
+The probability of the event \cale{} is equal to $1-(N/2^n)$.
+
+\noindent
+\textbf{Proof of Claim 3:}~ 
+In view of Claim 3, it is enough to show that the probability that 
+the peak occurs at $t = 2$ is $N/2^n$.
+To do this, we show the following: (i) every infection pattern corresponding to
+a satisfying assignment to the~ \mtsat{} instance causes
+the peak infection to occur at time $t = 2$ and (ii)
+every infection pattern corresponding to
+a non-satisfying assignment causes the peak infection to
+occur at time $t = 1$. 
+
+\noindent
+\underline{Part 3.1:}~ Consider any infection pattern corresponding
+to an assignment that satisfies all the clauses.
+The largest number of new infections at $t = 1$ is bounded by $|V_1|$
+= $|V_{11}| + |V_{12}|$ = $m(n+2)-1$.
+Now consider the number of nodes infected at time $t = 2$.
+Since the infection pattern satisfies all the clauses, at $t = 2$
+all the $m(n+2)$ nodes in $V_2$ get infected.
+In other words, the peak occurs at $t = 2$. 
+
+\medskip
+\noindent
+\underline{Part 3.2:}~ Consider any infection pattern corresponding
+to a non-satisfying assignment.
+Since $s$ is in state \istate{} at time $t = 0$ and the
+transmission probability of each edge in $E_1$ is 1,
+all the $r = m(n+2)-n-1$ nodes in $V_{11}$ get infected at $t = 1$.
+In other words, the number of nodes infected at $t = 1$ is
+at least $m(n+2)-n-1$.
+Since the infection pattern corresponds to a non-satisfying
+assignment, at most $(m-1)(n+2)$ nodes are infected at $t = 2$.
+It is easy to verify that the number of new infections at $t = 2$ is
+less than that at $t = 1$.
+In other words, the peak occurs at $t = 1$.
+
+Therefore, the probability of the event \cale{} is the same as
+the probability that an assignment chosen uniformly randomly from
+the set of all assignments does \emph{not} satisfy 
+all the clauses of the given \mtsat{} instance.
+Since the latter probability is $1-(N/2^n)$, Claim~4 follows. 
+
+The \cnump-hardness of \OnePeak{} ~follows from Claim~3.
+
+The \cnump-hardness of \tPeak{} for any $t \geq 2$ can be 
+established in a manner similar to that of Part~(1). 
+(The only difference is the path $\langle s_0, s_1, \ldots, s_{t-2}\rangle$
+that augments the graph contains $t-1$ nodes.)
+\QED
+
+We close this section with two remarks.
+
+\medskip
+
+\noindent
+\textbf{Remark 1:}~
+The formal result stated in Part~(2) of 
+Theorem~\ref{thm:gen_hardness} shows the difficulty of 
+approximating the quantity $\log(2^n\,p^*)$, where
+where $P^*$ is the solution value for the appropriate forecasting
+problem and $n$ is the maximum number of nodes that 
+can get infected at time $t-1$.
+Given the underlying graph, we note that it is easy to compute the
+value of $n$; it is simply the number of nodes which are at a
+distance of at most $t-1$ from
+any of the nodes which are in state \istate{} at $t = 0$.
+Therefore, the result of Part~(2) indeed shows the difficulty 
+of approximating the value of $p^*$. 
+
+\medskip
+
+\noindent
+\textbf{Remark 2:}~ Recall that problems \tNewInfv, \tTotInfv,
+\tVulv{} and \tTotVulv{} consider all nodes of the
+underlying graph.
+Of these four problems, we note that \tVulv{} is easy to
+solve in view of the following observations.
+
+\begin{description}
+\item{(a)}
+If none of the nodes of the SIR system are in state \istate{} at $t = 0$, 
+then for any $t \geq 1$, no infections can occur.
+Thus, the answer to the \tVulv{} problem is zero in this case
+for all $t \geq 0$.
+
+\item{(b)} If all the nodes of the SIR system are in state \istate{} at $t = 0$, 
+then the answer to the problem is 1 for $t = 0$ and 
+0 for for any $t \geq 1$ (since all the nodes change to 
+state \rstate{} at $t = 1$).
+
+\item{(c)}
+If the number of nodes in state \istate{} at $t = 0$ is at least 1 but
+\emph{less than} $|V|$, then the nodes in $V$ cannot
+get simultaneously infected at any time $t \geq 0$; thus, the solution
+value in this case is 0 for all $t \geq 0$.
+\end{description}
+The following result shows that the other three problems, namely
+\tNewInfv,\\ \tTotInfv{} and \tTotVulv{} remain 
+computationally intractable.
+
+\begin{theorem} \label{thm:hardness_for_whole_set} \leavevmode
+\begin{description}
+\item{(1)}
+For any $t \geq 2$, the problems \tNewInfv, \tTotInfv{} ~and \\
+\tTotVulv{} are \cnump-hard. 
+\item{(2)}
+Unless \textbf{P} = \cnp,
+for each of the problems \tNewInfv, \tTotInfv{} and
+\tTotVulv{} and for any $t \geq 2$,
+there is a constant $\epsilon > 0$
+such that if $p^*$ is the actual solution value,
+the quantity $\log{(2^n\,p^*)}$ cannot be approximated to within the factor
+$O(n^{\epsilon})$ in polynomial time, where $n$
+is the maximum number of nodes that can get infected at time $t-1$.
+\end{description}
+\end{theorem}
+
+This theorem can be proved through appropriate modifications to
+the construction given in the proof of 
+Theorem~\ref{thm:gen_hardness}.
+The details appear in the appendix.
