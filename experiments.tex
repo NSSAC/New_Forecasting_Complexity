@@ -13,24 +13,56 @@ $(\epsilon, \delta)$-approximation to $p^*$ using
 $N_{\epsilon, \delta} = O(N_{opt})$ samples, where
 $N_{\epsilon, \delta}$ is the number of samples used by \cite{dagum:focs95}, and
 $N_{opt}$ is the optimum number of Monte-Carlo samples that can give such an approximation
-to $p^*$.  Figure \ref{fig:dagum-mcmc} shows $N_{\epsilon, \delta}$ as a function
-of $t$ for a social contact network for Montgomery county, VA, 
+to $p^*$.  Figures \ref{fig:dagum-mcmc-montgomery} and \ref{fig:dagum-mcmc-ca-astroph}
+show $N_{\epsilon, \delta}$ as a function
+of $t$ for two different networks, and different probability values, for 
+$\epsilon = \delta=0.1$.
+Since there is a huge variance in the infected fraction, instead of
+choosing the transmission probability solely based on constraints on its expectation,
+we consider the probability that the infected fraction is above a threshold.
+Specifically, we consider a threshold of 15\%, and consider the value of $p$, so that
+the probability that the fraction infected exceeds this threshold is close to 0.1,
+0.4 and 0.7.
+Figure~\ref{fig:dagum-mcmc-montgomery} shows the results for
+a social contact network for Montgomery county, VA, 
 constructed using the approach of \cite{eubank:nature04, barrett:wsc09},
-for a probability $p$, which ensures that the expected number of infections
-is close to 15\% of the number of nodes.
-We note that $N_{\epsilon, \delta}$ are quite high.
+for probability values chosen as above.
+We note that $N_{\epsilon, \delta}$ reduce with $t$, and increase with $q$;
+in general, they are quite high, which is an indication that the variance is pretty high.
+Figure~\ref{fig:dagum-mcmc-ca-astroph} shows similar results for the co-authorship
+network for papers in astrophysics. We observe that $N_{\epsilon, \delta}$ is
+much smaller for such networks. Further, $N_{\epsilon, \delta}$ need not be monotone,
+as Figure~\ref{fig:dagum-mcmc-ca-astroph}(right) shows. This is possible, since the
+algorithm of \cite{dagum:focs95} is an estimator, and not an exact bound.
 
 \begin{figure}
 \centering
 %%\includegraphics[width=0.4\textwidth]{{dagum-0.0002}.pdf}
 %%\includegraphics[width=0.4\textwidth]{{dagum-0.0004}.pdf}
-\includegraphics[width=0.4\textwidth]{montgomery.png}
+\includegraphics[width=0.3\textwidth]{{montgomery_p0.0435}.png}
+\includegraphics[width=0.3\textwidth]{{montgomery_p0.044}.png}
+\includegraphics[width=0.3\textwidth]{{montgomery_p0.0445}.png}
 \caption{Number of Monte-Carlo samples using the approach of Dagum et al. \cite{dagum:focs95}
 on a social contact network for Montgomery county, VA, constructed using the approach of
 \cite{eubank:nature04, barrett:wsc09},
 for a transmission probability, such that the expected number of infections 
-is around 15\% of the total number of nodes.
+is around 15\% of the total number of nodes with probability
+around 0.1 (left), 0.4 (middle) and 0.7 (right).
 }
-\label{fig:dagum-mcmc}
+\label{fig:dagum-mcmc-montgomery}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.3\textwidth]{{ca-AstroPh_p0.0254}.png}
+\includegraphics[width=0.3\textwidth]{{ca-AstroPh_p0.03}.png}
+\includegraphics[width=0.3\textwidth]{{ca-AstroPh_p0.06}.png}
+\caption{Number of Monte-Carlo samples using the approach of Dagum et al. \cite{dagum:focs95}
+for the ca-AstroPh network,
+for a transmission probability, such that the expected number of infections 
+is around 15\% of the total number of nodes with probability
+around 0.1 (left), 0.5 (middle) and 0.7 (right).
+}
+\label{fig:dagum-mcmc-ca-astroph}
 \end{figure}
 
