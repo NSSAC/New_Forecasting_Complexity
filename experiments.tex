@@ -5,15 +5,17 @@
 \begin{table}[!ht]
 \centering
 \begin{small}
-\begin{tabular}{|p{3in}|l|l|p{1.0in}|}
+\begin{tabular}{|p{3in}|l|l|p{1.0in}|p{1.0in}|}
 \hline
- \textbf{Dataset} & \textbf{Nodes} & \textbf{Edges} & \textbf{Clustering coefficient}  \\ 
+ \textbf{Dataset} & \textbf{Nodes} & \textbf{Edges} & \textbf{Average clustering coefficient}
+& \textbf{Transitivity}  \\ 
 \hline
- Montgomery (constructed by the methods of~\cite{barrett:wsc09,eubank:nature04}) & 75457 & 648667 & \\
- ca-AstroPh~\cite{snap} & 18772 & 198110 & 0.6306\\
- Enron email network~\cite{snap} & 36692 & 183831 & 0.4970 \\   
- Brightkite~\cite{snap} & 58228 & 214078 & 0.1723 \\ 
-Musae-facebook~\cite{snap} & 22470 & 171002 & 0.232 \\ \hline
+ Montgomery (constructed by the methods of~\cite{barrett:wsc09,eubank:nature04}) & 75457 & 648667 & 0.5345 &  0.5087\\
+ ca-AstroPh~\cite{snap} & 18772 & 198110 & 0.6306 & 0.318\\
+ Enron email network~\cite{snap} & 36692 & 183831 & 0.4970 & 0.0853\\   
+ Brightkite~\cite{snap} & 58228 & 214078 & 0.1723 & 0.1105\\ 
+Musae-facebook~\cite{snap} & 22470 & 171002 & 0.3597 & 0.2323\\ 
+\hline
 \end{tabular}
 \end{small}
 \caption{Datasets used in the empirical analysis of Monte-Carlo sampling.}
