@@ -2,6 +2,24 @@
 \section{Estimates for number of Monte-Carlo samples needed}
 \label{sec:experiments}
 
+\begin{table}[!ht]
+\centering
+\begin{small}
+\begin{tabular}{|p{3in}|l|l|p{1.0in}|}
+\hline
+ \textbf{Dataset} & \textbf{Nodes} & \textbf{Edges} & \textbf{Clustering coefficient}  \\ 
+\hline
+ Montgomery (constructed by the methods of~\cite{barrett:wsc09,eubank:nature04}) & 75457 & 648667 & \\
+ ca-AstroPh~\cite{snap} & 18772 & 198110 & 0.6306\\
+ Enron email network~\cite{snap} & 36692 & 183831 & 0.4970 \\   
+ Brightkite~\cite{snap} & 58228 & 214078 & 0.1723 \\ 
+Musae-facebook~\cite{snap} & 22470 & 171002 & 0.232 \\ \hline
+\end{tabular}
+\end{small}
+\caption{Datasets used in the empirical analysis of Monte-Carlo sampling.}
+\label{tab:datasets}
+\end{table}
+
 Lemma \ref{lemma:mcmc-numinf} in Section \ref{sse:poly} shows that an 
 $(\epsilon, \delta)$-approximation to the expected total number of infections 
 in a set $S$ up to time $t$ can be estimated in polynomial time by a simple
@@ -13,27 +31,39 @@ $(\epsilon, \delta)$-approximation to $p^*$ using
 $N_{\epsilon, \delta} = O(N_{opt})$ samples, where
 $N_{\epsilon, \delta}$ is the number of samples used by \cite{dagum:focs95}, and
 $N_{opt}$ is the optimum number of Monte-Carlo samples that can give such an approximation
-to $p^*$.  Figures \ref{fig:dagum-mcmc-montgomery} and \ref{fig:dagum-mcmc-ca-astroph}
-show $N_{\epsilon, \delta}$ as a function
-of $t$ for two different networks, and different probability values, for 
+to $p^*$.  Figure \ref{fig:dagum-mcmc-montgomery}
+shows $N_{\epsilon, \delta}$ as a function
+of $t$ for the five different networks in Table~\ref{tab:datasets}, 
+and different probability values, for 
 $\epsilon = \delta=0.1$.
 Since there is a huge variance in the infected fraction, instead of
 choosing the transmission probability solely based on constraints on its expectation,
 we consider the probability that the infected fraction is above a threshold.
 Specifically, we consider a threshold of 15\%, and consider the value of $p$, so that
-the probability that the fraction infected exceeds this threshold is close to 0.1,
-0.4 and 0.7.
-Figure~\ref{fig:dagum-mcmc-montgomery} shows the results for
-a social contact network for Montgomery county, VA, 
-constructed using the approach of \cite{eubank:nature04, barrett:wsc09},
-for probability values chosen as above.
+the probability that the fraction infected exceeds this threshold is close to 0.1
+(referred to as ``low''), 0.4 (referred to as ``medium''), and 0.7 (referred to as ``high'').
+For each network, and each probability value, we examine how $N_{\epsilon, \delta}$
+varies with $t$, for a fixed value of $q$; three different values of $q$ are considered.
 We note that $N_{\epsilon, \delta}$ reduce with $t$, and increase with $q$;
 in general, they are quite high, which is an indication that the variance is pretty high.
-Figure~\ref{fig:dagum-mcmc-ca-astroph} shows similar results for the co-authorship
-network for papers in astrophysics. We observe that $N_{\epsilon, \delta}$ is
-much smaller for such networks. Further, $N_{\epsilon, \delta}$ need not be monotone,
-as Figure~\ref{fig:dagum-mcmc-ca-astroph}(right) shows. This is possible, since the
-algorithm of \cite{dagum:focs95} is an estimator, and not an exact bound.
+Some of our main observations are
+\begin{itemize}
+\item
+The number of samples $N_{\epsilon, \delta}$ generally drops very rapidly, as $t$
+increases. It also increases with $q$. However, $N_{\epsilon, \delta}$ is not monotone,
+in general, since the algorithm of \cite{dagum:focs95} is an estimator, and not an exact bound.
+\item
+In most of the networks, the number of samples needed for the low probability
+setting is significantly higher than for medium or high probabilities. This is not
+surprising, as the low probability leads to high variance.
+\item
+The Montgomery county social network needs the largest number of samples,
+which suggests a significantly higher variance in the outbreak characteristics
+in such networks, compared to other online social networks.
+\end{itemize}
+
+The large number of samples needed in many cases is further indication of the
+empirical hardness of the forecasting problems studied in this paper.
 
 \begin{figure}
 \centering
@@ -42,16 +72,33 @@ algorithm of \cite{dagum:focs95} is an estimator, and not an exact bound.
 \includegraphics[width=0.3\textwidth]{{figs/montgomery_p0.0435}.png}
 \includegraphics[width=0.3\textwidth]{{figs/montgomery_p0.044}.png}
 \includegraphics[width=0.3\textwidth]{{figs/montgomery_p0.0445}.png}
+\includegraphics[width=0.3\textwidth]{{figs/ca-AstroPh_p0.0254}.png}
+\includegraphics[width=0.3\textwidth]{{figs/ca-AstroPh_p0.03}.png}
+\includegraphics[width=0.3\textwidth]{{figs/ca-AstroPh_p0.06}.png}
+\includegraphics[width=0.3\textwidth]{{figs/email-Enron_p0.0498}.png}
+\includegraphics[width=0.3\textwidth]{{figs/email-Enron_p0.0515}.png}
+\includegraphics[width=0.3\textwidth]{{figs/email-Enron_p0.098}.png}
+\includegraphics[width=0.3\textwidth]{{figs/loc-brightkite_p0.0693}.png}
+\includegraphics[width=0.3\textwidth]{{figs/loc-brightkite_p0.07045}.png}
+\includegraphics[width=0.3\textwidth]{{figs/loc-brightkite_p0.0852}.png}
+\includegraphics[width=0.3\textwidth]{{figs/musae_facebook_p0.0388}.png}
+\includegraphics[width=0.3\textwidth]{{figs/musae_facebook_p0.055}.png}
+\includegraphics[width=0.3\textwidth]{{figs/musae_facebook_p0.118}.png}
 \caption{Number of Monte-Carlo samples using the approach of Dagum et al. \cite{dagum:focs95}
-on a social contact network for Montgomery county, VA, constructed using the approach of
-\cite{eubank:nature04, barrett:wsc09},
-for a transmission probability, such that the expected number of infections 
-is around 15\% of the total number of nodes with varying
-probability values: low (left), medium (middle), and high (right).
+on five different types of networks, as summarized in Table~\ref{tab:datasets}:
+a social contact network for Montgomery county, VA, constructed using the approach of
+\cite{eubank:nature04, barrett:wsc09} (Row 1),
+ca-AstroPh (Row 2), Enron email network (Row 3),
+Brightkite location network (Row 4), Facebook network (Row 5).
+For each network, we choose three probability values, which ensure that the fraction
+of infections is at least 15\% with varying
+probability values: low$\sim 0.1$ (left), medium$\sim 0.4$ (middle), and high$\sim 0.7$ (right).
 }
 \label{fig:dagum-mcmc-montgomery}
 \end{figure}
 
+%%%%%%%%% 
+\iffalse
 \begin{figure}
 \centering
 \includegraphics[width=0.3\textwidth]{{figs/ca-AstroPh_p0.0254}.png}
@@ -110,4 +157,5 @@ probability values: low (left), medium (middle), and high (right).
 }
 \label{fig:dagum-mcmc-facebook}
 \end{figure}
+\fi
 
